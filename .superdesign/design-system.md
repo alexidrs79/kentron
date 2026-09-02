@@ -4,7 +4,7 @@
 
 Kentron is a map-first guide to what is happening in Yerevan. It has two distinct time states presented through one segmented control: “Right now” for ephemeral live posts and “This week” for planned events. The interface must feel geographic and local, not like a social feed or generic event SaaS.
 
-Phase 3 wires the home page to the same fake data: a viewport-synced list (bottom sheet on mobile, side panel on desktop) and empty states for both time modes. Do not add creation forms, database UI, illustrations, or later-phase features.
+Phase 4 is the create flow only: one branching question, a short live-post form, a fuller planned-event form, and map-pin placement. State stays fake and local. Do not add illustrations, database, auth, or later-phase features.
 
 ## Visual direction
 
@@ -74,6 +74,13 @@ Phase 3 list rules:
 - Live rows: initial-circle, caption, place, age in Plex Mono. Planned rows: initial-circle, title, venue, category chip in sentence case.
 - Empty live: “Quiet right now near you. Be the first to post.” with a tuff Create action. Empty week: “Nothing planned yet near you. Be the first to post.” Same action. Invitation, not apology. No emoji, no illustrations yet.
 - The event/pulse row is one shared component, reused later on Saved.
+
+Phase 4 create rules:
+
+- One Create destination. First screen asks only “Happening now, or planned for later?” as two large, clearly different tappable cards, not a dropdown or tabs-as-the-first-choice.
+- Happening now stays short: required photo, short character-limited caption, category, drag-to-place pin, post. Completable in under a minute. No extra fields.
+- Planned for later: title, category, date/time in Armenia time, venue with pin placement plus optional address suggestions, description, optional photo, optional weekly-meetup flag that saves a reusable draft rather than an automated series.
+- Live pins on the picker are apricot. Planned pins follow the three category shapes/colors. No illustrations on the branch screen yet.
 
 ## Motion and accessibility
 

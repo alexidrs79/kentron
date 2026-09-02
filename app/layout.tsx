@@ -6,6 +6,7 @@ import {
   Noto_Sans_Armenian,
 } from "next/font/google";
 import { AppShell } from "@/components/app-shell";
+import { LocalRecordsProvider } from "@/components/local-records";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -47,7 +48,9 @@ export default function RootLayout({
       className={`${bricolage.variable} ${inter.variable} ${ibmPlexMono.variable} ${notoArmenian.variable}`}
     >
       <body>
-        <AppShell>{children}</AppShell>
+        <LocalRecordsProvider>
+          <AppShell>{children}</AppShell>
+        </LocalRecordsProvider>
       </body>
     </html>
   );

@@ -11,6 +11,7 @@ export interface PlannedEvent {
   venue: string;
   category: EventCategory;
   when: string;
+  isWeekly?: boolean;
   coordinates: Coordinates;
 }
 
@@ -18,6 +19,7 @@ export interface LivePulse {
   id: string;
   caption: string;
   place: string;
+  category: EventCategory;
   ageMinutes: number;
   coordinates: Coordinates;
 }
@@ -110,6 +112,7 @@ export const livePulses: LivePulse[] = [
     id: "cascade-duduk",
     caption: "Duduk and guitar on the upper Cascade steps",
     place: "Cascade",
+    category: "creative",
     ageMinutes: 8,
     coordinates: [44.5151, 40.1909],
   },
@@ -117,6 +120,7 @@ export const livePulses: LivePulse[] = [
     id: "cascade-dance",
     caption: "A small dance circle formed by the fountains",
     place: "Cascade",
+    category: "creative",
     ageMinutes: 17,
     coordinates: [44.5144, 40.1897],
   },
@@ -124,6 +128,7 @@ export const livePulses: LivePulse[] = [
     id: "opera-chess",
     caption: "Three chess boards out by Swan Lake",
     place: "Swan Lake",
+    category: "market",
     ageMinutes: 24,
     coordinates: [44.5136, 40.1838],
   },
@@ -131,6 +136,7 @@ export const livePulses: LivePulse[] = [
     id: "republic-brass",
     caption: "Brass trio playing beside the History Museum",
     place: "Republic Square",
+    category: "creative",
     ageMinutes: 41,
     coordinates: [44.5149, 40.1778],
   },
@@ -138,6 +144,7 @@ export const livePulses: LivePulse[] = [
     id: "vernissage-print-table",
     caption: "Printmakers set up one last table",
     place: "Vernissage",
+    category: "market",
     ageMinutes: 63,
     coordinates: [44.5192, 40.1768],
   },
@@ -145,6 +152,7 @@ export const livePulses: LivePulse[] = [
     id: "saryan-pop-up",
     caption: "Natural wine bottles and records on Saryan",
     place: "Saryan Street",
+    category: "market",
     ageMinutes: 86,
     coordinates: [44.5062, 40.1848],
   },
@@ -152,6 +160,7 @@ export const livePulses: LivePulse[] = [
     id: "kond-courtyard",
     caption: "Open courtyard screening starting now",
     place: "Kond",
+    category: "creative",
     ageMinutes: 112,
     coordinates: [44.5012, 40.1814],
   },
@@ -172,10 +181,12 @@ interface EventProperties {
   category: EventCategory;
 }
 
-export function pulseCollection(): FeatureCollection<Point, PulseProperties> {
+export function pulseCollection(
+  items: LivePulse[] = livePulses,
+): FeatureCollection<Point, PulseProperties> {
   return {
     type: "FeatureCollection",
-    features: livePulses.map((pulse) => ({
+    features: items.map((pulse) => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: [...pulse.coordinates] },
       properties: {
@@ -189,10 +200,12 @@ export function pulseCollection(): FeatureCollection<Point, PulseProperties> {
   };
 }
 
-export function eventCollection(): FeatureCollection<Point, EventProperties> {
+export function eventCollection(
+  items: PlannedEvent[] = plannedEvents,
+): FeatureCollection<Point, EventProperties> {
   return {
     type: "FeatureCollection",
-    features: plannedEvents.map((event) => ({
+    features: items.map((event) => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: [...event.coordinates] },
       properties: {

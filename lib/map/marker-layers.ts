@@ -1,5 +1,13 @@
 import type { Map } from "maplibre-gl";
-import { eventCollection, pulseCollection, type EventCategory } from "./fixtures";
+import {
+  eventCollection,
+  livePulses,
+  plannedEvents,
+  pulseCollection,
+  type EventCategory,
+  type LivePulse,
+  type PlannedEvent,
+} from "./fixtures";
 import { bindClusterZoom } from "./marker-interactions";
 
 const PULSE_SOURCE = "kentron-pulses";
@@ -52,19 +60,23 @@ function addMarkerImages(map: Map) {
   });
 }
 
-export function addMarkerLayers(map: Map) {
+export function addMarkerLayers(
+  map: Map,
+  pulses: LivePulse[] = livePulses,
+  events: PlannedEvent[] = plannedEvents,
+) {
   addMarkerImages(map);
 
   map.addSource(PULSE_SOURCE, {
     type: "geojson",
-    data: pulseCollection(),
+    data: pulseCollection(pulses),
     cluster: true,
     clusterMaxZoom: 15,
     clusterRadius: 56,
   });
   map.addSource(EVENT_SOURCE, {
     type: "geojson",
-    data: eventCollection(),
+    data: eventCollection(events),
     cluster: true,
     clusterMaxZoom: 15,
     clusterRadius: 54,

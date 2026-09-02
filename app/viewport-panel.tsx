@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { PlaceRow } from "@/components/place-row";
-import {
-  livePulses,
-  plannedEvents,
-  type TimeMode,
-} from "@/lib/map/fixtures";
+import type { LivePulse, PlannedEvent, TimeMode } from "@/lib/map/fixtures";
 import { formatAge, isInBounds, type MapBounds } from "@/lib/map/viewport";
 
 const categoryLabel = {
@@ -16,18 +12,23 @@ const categoryLabel = {
 export function ViewportPanel({
   mode,
   bounds,
+  pulses,
+  events,
 }: {
   mode: TimeMode;
   bounds: MapBounds | null;
+  pulses: LivePulse[];
+  events: PlannedEvent[];
 }) {
-  const pulses = bounds
-    ? livePulses.filter((item) => isInBounds(item.coordinates, bounds))
-    : livePulses;
-  const events = bounds
-    ? plannedEvents.filter((item) => isInBounds(item.coordinates, bounds))
-    : plannedEvents;
+  const visiblePulses = bounds
+    ? pulses.filter((item) => isInBounds(item.coordinates, bounds))
+    : pulses;
+  const visibleEvents = bounds
+    ? events.filter((item) => isInBounds(item.coordinates, bounds))
+    : events;
 
-  const empty = mode === "now" ? pulses.length === 0 : events.length === 0;
+  const empty =
+    mode === "now" ? visiblePulses.length === 0 : visibleEvents.length === 0;
 
   return (
     <aside className="pointer-events-auto absolute inset-x-0 bottom-0 z-[400] flex max-h-[42%] flex-col rounded-t-3xl border-t border-line bg-surface/96 shadow-[0_-18px_40px_rgb(9_12_24/0.28)] backdrop-blur-md md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-80 md:rounded-none md:border-l md:border-t-0 md:shadow-[-18px_0_40px_rgb(9_12_24/0.18)]">
@@ -40,15 +41,15 @@ export function ViewportPanel({
           {empty
             ? "Nothing in this view"
             : mode === "now"
-              ? `${pulses.length} live`
-              : `${events.length} planned`}
+              ? `${visiblePulses.length} live`
+              : `${visibleEvents.length} planned`}
         </p>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
         {empty ? (
           <EmptyState mode={mode} />
         ) : mode === "now" ? (
-          pulses.map((pulse) => (
+          visiblePulses.map((pulse) => (
             <PlaceRow
               key={pulse.id}
               href={`/post/${pulse.id}`}
@@ -59,7 +60,7 @@ export function ViewportPanel({
             />
           ))
         ) : (
-          events.map((event) => (
+          visibleEvents.map((event) => (
             <PlaceRow
               key={event.id}
               href={`/event/${event.id}`}
