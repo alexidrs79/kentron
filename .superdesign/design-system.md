@@ -4,7 +4,7 @@
 
 Kentron is a map-first guide to what is happening in Yerevan. It has two distinct time states presented through one segmented control: “Right now” for ephemeral live posts and “This week” for planned events. The interface must feel geographic and local, not like a social feed or generic event SaaS.
 
-Phase 1 covers only the responsive application shell, navigation, typography, color tokens, and a working custom dusk map. Do not add event cards, markers, creation forms, database UI, or later-phase features.
+Phase 2 adds fake planned-event and live-pulse markers, clustering, toggle switching, and a collapsed legend. Do not add event lists, bottom sheets, empty states, creation forms, database UI, or later-phase features.
 
 ## Visual direction
 
@@ -31,7 +31,7 @@ No gradients. Shadows should be broad and low-opacity, used only to separate flo
 - Display and Latin-script headings: Bricolage Grotesque, weights 600–700.
 - UI and body: Inter.
 - Time, distance, counts, coordinates, and compact status labels: IBM Plex Mono with tabular figures.
-- Armenian-script text must explicitly fall back to Inter because Bricolage Grotesque does not provide dependable Armenian coverage.
+- Armenian-script text uses Noto Sans Armenian because neither Bricolage Grotesque nor Inter includes Armenian glyphs.
 - Sentence case everywhere. Never use all-caps labels.
 
 Phase 1 should visibly demonstrate all three families in purposeful content.
@@ -56,9 +56,16 @@ Other Phase 1 routes may render restrained shell placeholders that confirm routi
 
 ## Map
 
-The base map must be a real interactive MapLibre map using an open raster source, with CSS-level dusk treatment and a dusk background visible while tiles load. Prefer a desaturated, low-contrast result that leaves room for future markers. Attribution remains visible but subdued and accessible.
+The base map is a real interactive MapLibre map with a vector style recolored to the dusk palette. It uses CARTO Dark Matter when a local key exists and OpenFreeMap as the keyless fallback. Attribution remains visible but subdued and accessible.
 
-No pins, clusters, legend, sheets, or data overlays in Phase 1.
+Phase 2 marker rules:
+
+- Live pulses are always apricot, never category-colored. They use a circular center with a clearly visible pulse ring and fade modestly with age.
+- Planned events use exactly three category colors: tech blue, creative violet, and market green.
+- Category markers must differ by shape as well as color: rounded square for tech, diamond for creative, and circle for market.
+- Clusters use compact dusk circles with paper counts and a quiet ararat outline. Do not mix live and planned records in one active source.
+- The legend is a compact floating button by default and expands into four keys: live pulse plus the three planned categories.
+- Markers and legend must remain readable without introducing cards, labels, or a feed in this phase.
 
 ## Motion and accessibility
 

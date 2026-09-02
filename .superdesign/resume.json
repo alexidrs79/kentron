@@ -7,19 +7,27 @@
       "activeDraftId": "7921bba9-7810-483c-a9c8-e333371ac26b",
       "designSystemPath": ".superdesign/design-system.md",
       "contextFiles": [
-        ".superdesign/design-system.md"
+        ".superdesign/design-system.md",
+        "app/globals.css",
+        "components/app-shell.tsx",
+        "app/page.tsx",
+        "app/map-controls.tsx"
       ],
       "fingerprints": {
-        ".superdesign/design-system.md": "b4bb36234a799a97129e91e7c14c9c5a72284d0e420e5c06f5dadf737bf97c9d"
+        ".superdesign/design-system.md": "071334ddbc05114ccc9ec294b6fdf6f405a38e6c078afc1cb831fd59e4a19437",
+        "app/globals.css": "af335408b418d44d887fa104b64bacd9106da03388477880a6a4be2ee4a41305",
+        "components/app-shell.tsx": "a2f0835fda85b655578a1a6b1fb2b73309ad9fe21b9fc411dcbd03414db7ee4b",
+        "app/page.tsx": "19ead042d42bfa10bc4d9aa6b4dac84efb5b46188a5100e5173f873201fb6514",
+        "app/map-controls.tsx": "3f4c39ca8242568151204e4897c93fd2d7581e88ca8ffed4adce7241f80cd0db"
       },
       "drafts": {
         "7921bba9-7810-483c-a9c8-e333371ac26b": {
-          "title": "Kentron Shell Desktop",
-          "visualDirection": "dusk map-first application shell",
-          "currentVersion": 1
+          "title": "Kentron Phase 2 Map View",
+          "visualDirection": "dusk map with live pulses, category markers, clusters, and legend",
+          "currentVersion": 2
         }
       },
-      "updatedAt": "2026-09-02T16:32:30Z"
+      "updatedAt": "2026-09-02T19:31:00Z"
     }
   }
 }

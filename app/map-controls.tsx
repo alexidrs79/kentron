@@ -1,13 +1,15 @@
 "use client";
 
 import { LocateFixed } from "lucide-react";
-import { useState } from "react";
+import type { TimeMode } from "@/lib/map/fixtures";
 
-type TimeMode = "now" | "week";
-
-export function MapControls() {
-  const [mode, setMode] = useState<TimeMode>("now");
-
+export function MapControls({
+  mode,
+  onModeChange,
+}: {
+  mode: TimeMode;
+  onModeChange: (mode: TimeMode) => void;
+}) {
   return (
     <div className="pointer-events-none absolute inset-x-3 top-3 z-[500] flex items-start justify-between gap-3 sm:inset-x-6 sm:top-6">
       <div
@@ -18,7 +20,7 @@ export function MapControls() {
         <button
           type="button"
           aria-pressed={mode === "now"}
-          onClick={() => setMode("now")}
+          onClick={() => onModeChange("now")}
           className={`min-h-10 rounded-xl px-3.5 text-sm font-medium transition-colors sm:px-5 ${
             mode === "now"
               ? "bg-paper text-dusk"
@@ -30,7 +32,7 @@ export function MapControls() {
         <button
           type="button"
           aria-pressed={mode === "week"}
-          onClick={() => setMode("week")}
+          onClick={() => onModeChange("week")}
           className={`min-h-10 rounded-xl px-3.5 text-sm font-medium transition-colors sm:px-5 ${
             mode === "week"
               ? "bg-paper text-dusk"

@@ -3,12 +3,21 @@
 import { useEffect, useRef } from "react";
 import { attachCartoKey, loadCartoDuskStyle } from "@/lib/map/carto-dusk";
 import { duskStyle } from "@/lib/map/dusk-style";
+import type { TimeMode } from "@/lib/map/fixtures";
+import { addMarkerLayers } from "@/lib/map/marker-layers";
+import {
+  animatePulseRing,
+  setMarkerMode,
+} from "@/lib/map/marker-interactions";
 
 const YEREVAN_CENTER: [number, number] = [44.5136, 40.1811];
 const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY;
 
-export function MapCanvas() {
+export function MapCanvas({ mode }: { mode: TimeMode }) {
   const mapElement = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<import("maplibre-gl").Map>(null);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
 
   useEffect(() => {
     if (!mapElement.current) return;
@@ -16,56 +25,69 @@ export function MapCanvas() {
     let disposed = false;
     let map: import("maplibre-gl").Map | undefined;
 
-    void import("maplibre-gl").then(async ({ Map, NavigationControl, setWorkerUrl }) => {
-      if (disposed || !mapElement.current) return;
+    void import("maplibre-gl").then(
+      async ({ Map, NavigationControl, setWorkerUrl }) => {
+        if (disposed || !mapElement.current) return;
 
-      setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+        setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+        const style = CARTO_KEY
+          ? await loadCartoDuskStyle(CARTO_KEY).catch(() => duskStyle)
+          : duskStyle;
+        if (disposed || !mapElement.current) return;
 
-      const style = CARTO_KEY
-        ? await loadCartoDuskStyle(CARTO_KEY)
-        : duskStyle;
+        map = new Map({
+          container: mapElement.current,
+          style,
+          center: YEREVAN_CENTER,
+          zoom: 13.4,
+          transformRequest: (url) =>
+            CARTO_KEY ? attachCartoKey(url, CARTO_KEY) : undefined,
+          attributionControl: {
+            compact: true,
+            customAttribution: CARTO_KEY
+              ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              : '<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          },
+        });
+        mapRef.current = map;
 
-      if (disposed || !mapElement.current) return;
+        map.on("error", ({ error }) => {
+          console.error("[kentron:map]", error?.message ?? error);
+        });
+        map.on("load", () => {
+          if (!map) return;
+          addMarkerLayers(map);
+          setMarkerMode(map, modeRef.current);
+          stopPulse = animatePulseRing(map);
+        });
+        map.addControl(
+          new NavigationControl({ showCompass: false }),
+          "bottom-right",
+        );
 
-      map = new Map({
-        container: mapElement.current,
-        style,
-        center: YEREVAN_CENTER,
-        zoom: 13.4,
-        transformRequest: (url) =>
-          CARTO_KEY ? attachCartoKey(url, CARTO_KEY) : undefined,
-        attributionControl: {
-          compact: true,
-          customAttribution: CARTO_KEY
-            ? '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>'
-            : '<a href="https://openfreemap.org" target="_blank" rel="noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
-        },
-      });
-
-      map.on("error", ({ error }) => {
-        console.error("[kentron:map]", error?.message ?? error);
-      });
-
-      map.addControl(
-        new NavigationControl({ showCompass: false }),
-        "bottom-right",
-      );
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
+        navigator.geolocation?.getCurrentPosition(
           ({ coords }) =>
             map?.easeTo({ center: [coords.longitude, coords.latitude] }),
           () => undefined,
-          { enableHighAccuracy: false, timeout: 5_000, maximumAge: 300_000 },
+          { timeout: 5_000, maximumAge: 300_000 },
         );
-      }
-    });
+      },
+    );
+
+    let stopPulse: () => void = () => {};
 
     return () => {
       disposed = true;
+      stopPulse();
       map?.remove();
+      mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map?.getLayer("pulse-point")) setMarkerMode(map, mode);
+  }, [mode]);
 
   return (
     <div
