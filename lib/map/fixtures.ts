@@ -10,6 +10,7 @@ export interface PlannedEvent {
   title: string;
   venue: string;
   category: EventCategory;
+  when: string;
   coordinates: Coordinates;
 }
 
@@ -27,6 +28,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Open lab: small models on local hardware",
     venue: "TUMO Center for Creative Technologies",
     category: "tech",
+    when: "Thu 19:00",
     coordinates: [44.4897, 40.1945],
   },
   {
@@ -34,6 +36,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Founder office hours",
     venue: "Hero House Yerevan",
     category: "tech",
+    when: "Fri 18:30",
     coordinates: [44.5039, 40.1886],
   },
   {
@@ -41,6 +44,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Engineering community meetup",
     venue: "Engineering City",
     category: "tech",
+    when: "Sat 11:00",
     coordinates: [44.4933, 40.2105],
   },
   {
@@ -48,6 +52,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "New Armenian photography",
     venue: "Mirzoyan Library",
     category: "creative",
+    when: "Thu 20:00",
     coordinates: [44.5118, 40.1761],
   },
   {
@@ -55,6 +60,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Chamber music after work",
     venue: "Armenian National Opera",
     category: "creative",
+    when: "Fri 19:30",
     coordinates: [44.5152, 40.1851],
   },
   {
@@ -62,6 +68,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "ToneLab listening session",
     venue: "ToneLab",
     category: "creative",
+    when: "Sat 21:00",
     coordinates: [44.5122, 40.1837],
   },
   {
@@ -69,6 +76,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Sculpture garden walk",
     venue: "Cafesjian Center for the Arts",
     category: "creative",
+    when: "Sun 16:00",
     coordinates: [44.5153, 40.1916],
   },
   {
@@ -76,6 +84,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Local makers at Vernissage",
     venue: "Vernissage Market",
     category: "market",
+    when: "Sat 10:00",
     coordinates: [44.5198, 40.1771],
   },
   {
@@ -83,6 +92,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Saryan street wine tasting",
     venue: "Saryan Street",
     category: "market",
+    when: "Fri 18:00",
     coordinates: [44.5057, 40.1853],
   },
   {
@@ -90,6 +100,7 @@ export const plannedEvents: PlannedEvent[] = [
     title: "Easy five-kilometre city run",
     venue: "English Park",
     category: "market",
+    when: "Sun 08:00",
     coordinates: [44.5078, 40.1736],
   },
 ];

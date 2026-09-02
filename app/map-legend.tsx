@@ -13,7 +13,7 @@ export function MapLegend() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="pointer-events-auto absolute bottom-4 left-3 z-[500] flex flex-col items-start gap-2 sm:left-6 md:bottom-6">
+    <div className="pointer-events-auto absolute bottom-[calc(42%+0.75rem)] left-3 z-[500] flex flex-col items-start gap-2 sm:left-6 md:bottom-6">
       {open && (
         <div className="min-w-48 rounded-2xl border border-line bg-surface/95 p-4 shadow-[0_16px_45px_rgb(9_12_24/0.3)] backdrop-blur-md">
           <p className="mb-3 font-display text-sm font-semibold">Map key</p>

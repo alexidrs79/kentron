@@ -9,15 +9,24 @@ import {
   animatePulseRing,
   setMarkerMode,
 } from "@/lib/map/marker-interactions";
+import type { MapBounds } from "@/lib/map/viewport";
 
 const YEREVAN_CENTER: [number, number] = [44.5136, 40.1811];
 const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY;
 
-export function MapCanvas({ mode }: { mode: TimeMode }) {
+export function MapCanvas({
+  mode,
+  onBoundsChange,
+}: {
+  mode: TimeMode;
+  onBoundsChange: (bounds: MapBounds) => void;
+}) {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("maplibre-gl").Map>(null);
   const modeRef = useRef(mode);
+  const onBoundsChangeRef = useRef(onBoundsChange);
   modeRef.current = mode;
+  onBoundsChangeRef.current = onBoundsChange;
 
   useEffect(() => {
     if (!mapElement.current) return;
@@ -54,12 +63,26 @@ export function MapCanvas({ mode }: { mode: TimeMode }) {
         map.on("error", ({ error }) => {
           console.error("[kentron:map]", error?.message ?? error);
         });
+        const publishBounds = () => {
+          const box = map?.getBounds();
+          if (!box) return;
+          onBoundsChangeRef.current({
+            west: box.getWest(),
+            south: box.getSouth(),
+            east: box.getEast(),
+            north: box.getNorth(),
+          });
+        };
+
         map.on("load", () => {
           if (!map) return;
           addMarkerLayers(map);
           setMarkerMode(map, modeRef.current);
           stopPulse = animatePulseRing(map);
+          publishBounds();
         });
+        map.on("moveend", publishBounds);
+        map.on("zoomend", publishBounds);
         map.addControl(
           new NavigationControl({ showCompass: false }),
           "bottom-right",

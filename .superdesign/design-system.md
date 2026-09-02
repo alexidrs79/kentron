@@ -4,7 +4,7 @@
 
 Kentron is a map-first guide to what is happening in Yerevan. It has two distinct time states presented through one segmented control: “Right now” for ephemeral live posts and “This week” for planned events. The interface must feel geographic and local, not like a social feed or generic event SaaS.
 
-Phase 2 adds fake planned-event and live-pulse markers, clustering, toggle switching, and a collapsed legend. Do not add event lists, bottom sheets, empty states, creation forms, database UI, or later-phase features.
+Phase 3 wires the home page to the same fake data: a viewport-synced list (bottom sheet on mobile, side panel on desktop) and empty states for both time modes. Do not add creation forms, database UI, illustrations, or later-phase features.
 
 ## Visual direction
 
@@ -67,6 +67,14 @@ Phase 2 marker rules:
 - The legend is a compact floating button by default and expands into four keys: live pulse plus the three planned categories.
 - Markers and legend must remain readable without introducing cards, labels, or a feed in this phase.
 
+Phase 3 list rules:
+
+- Mobile: a bottom sheet over the map, synced to the current viewport. Desktop: a matching side panel on the right.
+- The list shows only items currently inside the map bounds for the active toggle. Panning updates the list.
+- Live rows: initial-circle, caption, place, age in Plex Mono. Planned rows: initial-circle, title, venue, category chip in sentence case.
+- Empty live: “Quiet right now near you. Be the first to post.” with a tuff Create action. Empty week: “Nothing planned yet near you. Be the first to post.” Same action. Invitation, not apology. No emoji, no illustrations yet.
+- The event/pulse row is one shared component, reused later on Saved.
+
 ## Motion and accessibility
 
 - Use 160–220ms transitions for navigation and segmented control state.
@@ -77,4 +85,4 @@ Phase 2 marker rules:
 
 ## Copy
 
-Direct, local, and restrained. No emoji, exclamation-heavy language, or filler. Use real Yerevan place language where a label is needed. Avoid fake event content in Phase 1.
+Direct, local, and restrained. No emoji, exclamation-heavy language, or filler. Use real Yerevan place names. Seed copy must sound local, never “Event Title Here.”

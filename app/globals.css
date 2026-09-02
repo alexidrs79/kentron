@@ -61,7 +61,7 @@ a {
 }
 
 .kentron-map .maplibregl-ctrl-group {
-  margin: 0 18px 84px 0;
+  margin: 0 18px calc(42% + 12px) 0;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--color-line) 86%, transparent);
   border-radius: 14px;
@@ -103,7 +103,7 @@ a {
 
 @media (min-width: 768px) {
   .kentron-map .maplibregl-ctrl-group {
-    margin-bottom: 24px;
+    margin: 0 340px 24px 0;
   }
 }
 

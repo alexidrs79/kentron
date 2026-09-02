@@ -22,9 +22,9 @@
       },
       "drafts": {
         "7921bba9-7810-483c-a9c8-e333371ac26b": {
-          "title": "Kentron Phase 2 Map View",
-          "visualDirection": "dusk map with live pulses, category markers, clusters, and legend",
-          "currentVersion": 2
+          "title": "Kentron Phase 3 Map List Panel",
+          "visualDirection": "dusk map with viewport-synced list panel, empty states, and time toggle",
+          "currentVersion": 3
         }
       },
       "updatedAt": "2026-09-02T19:31:00Z"
