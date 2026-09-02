@@ -12,6 +12,7 @@ export default defineConfig([
     "node_modules/**",
     ".superdesign/**",
     "public/**",
+    "drizzle/**",
     "next-env.d.ts",
   ]),
 ]);

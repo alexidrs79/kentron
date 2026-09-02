@@ -4,7 +4,7 @@
 
 Kentron is a map-first guide to what is happening in Yerevan. It has two distinct time states presented through one segmented control: “Right now” for ephemeral live posts and “This week” for planned events. The interface must feel geographic and local, not like a social feed or generic event SaaS.
 
-Phase 5 integrates the supplied Yerevan illustration set into auth, empty, create-branch, and error states, plus the supplied pin logo and simple initial-circle identities. Do not add database wiring, authentication behavior, or later-phase features.
+Phase 6 adds the Postgres schema, organizer auth, and a seed of real Yerevan events and live posts. Do not replace the home map’s local create state with server actions yet.
 
 ## Visual direction
 

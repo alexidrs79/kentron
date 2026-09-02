@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
-const fieldClass =
-  "min-h-11 w-full rounded-xl border border-line bg-dusk px-3 text-sm text-paper outline-none";
+import { AuthForm } from "@/components/auth-form";
 
 export function AuthPage({ mode }: { mode: "login" | "signup" }) {
   const signup = mode === "signup";
@@ -32,36 +30,7 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
               ? "For planned events and saved places. Live posts stay anonymous."
               : "Manage planned events and the places you saved."}
           </p>
-          <form className="mt-8 space-y-5">
-            {signup ? (
-              <label className="block">
-                <span className="mb-2 block text-sm">Name</span>
-                <input className={fieldClass} autoComplete="name" />
-              </label>
-            ) : null}
-            <label className="block">
-              <span className="mb-2 block text-sm">Email</span>
-              <input
-                className={fieldClass}
-                type="email"
-                autoComplete="email"
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm">Password</span>
-              <input
-                className={fieldClass}
-                type="password"
-                autoComplete={signup ? "new-password" : "current-password"}
-              />
-            </label>
-            <button
-              type="button"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-tuff px-5 text-sm font-medium text-dusk"
-            >
-              {signup ? "Sign up" : "Log in"}
-            </button>
-          </form>
+          <AuthForm mode={mode} />
           <p className="mt-6 text-sm text-paper-2">
             {signup ? "Already have an account?" : "New here?"}{" "}
             <Link
