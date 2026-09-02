@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "new-ui",
+      "projectId": "7f731600-b355-44e4-8ccf-f9eca9285291",
+      "activeDraftId": "7921bba9-7810-483c-a9c8-e333371ac26b",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "b4bb36234a799a97129e91e7c14c9c5a72284d0e420e5c06f5dadf737bf97c9d"
+      },
+      "drafts": {
+        "7921bba9-7810-483c-a9c8-e333371ac26b": {
+          "title": "Kentron Shell Desktop",
+          "visualDirection": "dusk map-first application shell",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-02T16:32:30Z"
+    }
+  }
+}
