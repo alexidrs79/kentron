@@ -3,6 +3,7 @@ import {
   Bricolage_Grotesque,
   IBM_Plex_Mono,
   Inter,
+  Noto_Sans_Armenian,
 } from "next/font/google";
 import { AppShell } from "@/components/app-shell";
 import "./globals.css";
@@ -16,6 +17,12 @@ const bricolage = Bricolage_Grotesque({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const notoArmenian = Noto_Sans_Armenian({
+  subsets: ["armenian"],
+  variable: "--font-noto-armenian",
+  weight: ["400", "600", "700"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -37,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${inter.variable} ${ibmPlexMono.variable}`}
+      className={`${bricolage.variable} ${inter.variable} ${ibmPlexMono.variable} ${notoArmenian.variable}`}
     >
       <body>
         <AppShell>{children}</AppShell>

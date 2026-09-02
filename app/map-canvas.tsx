@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { duskStyle } from "@/lib/map/dusk-style";
 
-const YEREVAN_CENTER: [number, number] = [40.1811, 44.5136];
+const YEREVAN_CENTER: [number, number] = [44.5136, 40.1811];
 
 export function MapCanvas() {
   const mapElement = useRef<HTMLDivElement>(null);
@@ -11,37 +12,45 @@ export function MapCanvas() {
     if (!mapElement.current) return;
 
     let disposed = false;
-    let map: import("leaflet").Map | undefined;
+    let map: import("maplibre-gl").Map | undefined;
 
-    void import("leaflet").then((L) => {
-      if (disposed || !mapElement.current) return;
+    void import("maplibre-gl").then(
+      ({ Map, NavigationControl, setWorkerUrl }) => {
+        if (disposed || !mapElement.current) return;
 
-      map = L.map(mapElement.current, {
-        center: YEREVAN_CENTER,
-        zoom: 14,
-        zoomControl: false,
-        attributionControl: true,
-      });
+        setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
-      L.tileLayer(
-        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          maxZoom: 19,
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        },
-      ).addTo(map);
+        map = new Map({
+          container: mapElement.current,
+          style: duskStyle,
+          center: YEREVAN_CENTER,
+          zoom: 13.4,
+          attributionControl: {
+            compact: true,
+            customAttribution:
+              '<a href="https://openfreemap.org" target="_blank" rel="noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+          },
+        });
 
-      L.control.zoom({ position: "bottomright" }).addTo(map);
+        map.on("error", ({ error }) => {
+          console.error("[kentron:map]", error?.message ?? error);
+        });
 
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          ({ coords }) => map?.setView([coords.latitude, coords.longitude], 14),
-          () => undefined,
-          { enableHighAccuracy: false, timeout: 5_000, maximumAge: 300_000 },
+        map.addControl(
+          new NavigationControl({ showCompass: false }),
+          "bottom-right",
         );
-      }
-    });
+
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            ({ coords }) =>
+              map?.easeTo({ center: [coords.longitude, coords.latitude] }),
+            () => undefined,
+            { enableHighAccuracy: false, timeout: 5_000, maximumAge: 300_000 },
+          );
+        }
+      },
+    );
 
     return () => {
       disposed = true;
