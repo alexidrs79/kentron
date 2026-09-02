@@ -7,6 +7,7 @@ import {
   Search,
   UserRound,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -52,10 +53,14 @@ function YerevanClock() {
 function Brand() {
   return (
     <Link href="/" className="flex items-center gap-3" aria-label="Kentron home">
-      <span className="relative grid size-7 place-items-center rounded-full border border-tuff/40 bg-tuff/10">
-        <span className="size-1.5 rounded-full bg-tuff" />
-        <span className="absolute size-3.5 rounded-full border border-tuff/35" />
-      </span>
+      <Image
+        src="/illustrations/kentron-pin.jpg"
+        alt=""
+        width={40}
+        height={40}
+        priority
+        className="size-8 rounded-xl object-cover"
+      />
       <span className="armenian text-xl font-semibold tracking-[-0.03em]">
         Կենտրոն
       </span>

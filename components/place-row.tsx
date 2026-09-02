@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { UserRound } from "lucide-react";
 
 const accents = {
   live: "bg-apricot/15 text-apricot",
@@ -14,6 +15,7 @@ export function PlaceRow({
   title,
   meta,
   chip,
+  anonymous = false,
 }: {
   href: string;
   initial: string;
@@ -21,6 +23,7 @@ export function PlaceRow({
   title: string;
   meta: string;
   chip?: string;
+  anonymous?: boolean;
 }) {
   return (
     <Link
@@ -30,7 +33,11 @@ export function PlaceRow({
       <span
         className={`grid size-10 shrink-0 place-items-center rounded-full text-sm font-semibold ${accents[accent]}`}
       >
-        {initial}
+        {anonymous ? (
+          <UserRound size={17} strokeWidth={1.75} aria-label="Anonymous" />
+        ) : (
+          initial
+        )}
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium text-paper">

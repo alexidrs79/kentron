@@ -35,6 +35,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Կենտրոն — What’s happening in Yerevan",
   description: "Planned events and live posts across Yerevan, seen on a map.",
+  icons: { icon: "/illustrations/kentron-pin.jpg" },
 };
 
 export default function RootLayout({

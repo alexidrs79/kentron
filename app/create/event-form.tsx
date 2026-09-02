@@ -56,6 +56,7 @@ export function EventForm({ onBack }: { onBack: () => void }) {
     }
     addEvent({
       id: slugId("event"),
+      organizer: "You",
       title: title.trim(),
       venue: venue.trim(),
       category,

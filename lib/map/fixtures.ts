@@ -7,6 +7,7 @@ type Coordinates = readonly [longitude: number, latitude: number];
 
 export interface PlannedEvent {
   id: string;
+  organizer: string;
   title: string;
   venue: string;
   category: EventCategory;
@@ -27,6 +28,7 @@ export interface LivePulse {
 export const plannedEvents: PlannedEvent[] = [
   {
     id: "tumo-ai-lab",
+    organizer: "TUMO Labs",
     title: "Open lab: small models on local hardware",
     venue: "TUMO Center for Creative Technologies",
     category: "tech",
@@ -35,6 +37,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "startup-office-hours",
+    organizer: "Hero House",
     title: "Founder office hours",
     venue: "Hero House Yerevan",
     category: "tech",
@@ -43,6 +46,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "armenia-engineering-week",
+    organizer: "Engineering Association",
     title: "Engineering community meetup",
     venue: "Engineering City",
     category: "tech",
@@ -51,6 +55,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "mirzoyan-photo-night",
+    organizer: "Mirzoyan Library",
     title: "New Armenian photography",
     venue: "Mirzoyan Library",
     category: "creative",
@@ -59,6 +64,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "opera-chamber-night",
+    organizer: "Yerevan Opera",
     title: "Chamber music after work",
     venue: "Armenian National Opera",
     category: "creative",
@@ -67,6 +73,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "tonelab-listening-session",
+    organizer: "ToneLab",
     title: "ToneLab listening session",
     venue: "ToneLab",
     category: "creative",
@@ -75,6 +82,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "cafesjian-sculpture-tour",
+    organizer: "Cafesjian Center",
     title: "Sculpture garden walk",
     venue: "Cafesjian Center for the Arts",
     category: "creative",
@@ -83,6 +91,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "vernissage-makers",
+    organizer: "Vernissage Makers",
     title: "Local makers at Vernissage",
     venue: "Vernissage Market",
     category: "market",
@@ -91,6 +100,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "saryan-wine-tasting",
+    organizer: "Saryan Wine Days",
     title: "Saryan street wine tasting",
     venue: "Saryan Street",
     category: "market",
@@ -99,6 +109,7 @@ export const plannedEvents: PlannedEvent[] = [
   },
   {
     id: "english-park-run",
+    organizer: "Yerevan Runners",
     title: "Easy five-kilometre city run",
     venue: "English Park",
     category: "market",

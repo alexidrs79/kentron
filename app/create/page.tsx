@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { EventForm } from "./event-form";
 import { LiveForm } from "./live-form";
@@ -32,6 +33,14 @@ function Branch({ onChoose }: { onChoose: (step: Step) => void }) {
       <p className="mt-4 max-w-lg text-sm leading-6 text-paper-2">
         One choice. Then the short form that matches it.
       </p>
+      <Image
+        src="/illustrations/create-branch.jpg"
+        alt="A woman captures what is happening now while a man plans an event"
+        width={1024}
+        height={558}
+        priority
+        className="mt-8 aspect-[16/7] w-full rounded-3xl border border-line object-cover"
+      />
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <button
           type="button"

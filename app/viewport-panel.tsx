@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PlaceRow } from "@/components/place-row";
 import type { LivePulse, PlannedEvent, TimeMode } from "@/lib/map/fixtures";
 import { formatAge, isInBounds, type MapBounds } from "@/lib/map/viewport";
@@ -57,6 +58,7 @@ export function ViewportPanel({
               accent="live"
               title={pulse.caption}
               meta={`${pulse.place} · ${formatAge(pulse.ageMinutes)}`}
+              anonymous
             />
           ))
         ) : (
@@ -64,7 +66,7 @@ export function ViewportPanel({
             <PlaceRow
               key={event.id}
               href={`/event/${event.id}`}
-              initial={event.venue.slice(0, 1)}
+              initial={event.organizer.slice(0, 1)}
               accent={event.category}
               title={event.title}
               meta={`${event.venue} · ${event.when}`}
@@ -80,6 +82,15 @@ export function ViewportPanel({
 function EmptyState({ mode }: { mode: TimeMode }) {
   return (
     <div className="px-1 py-6">
+      {mode === "now" ? (
+        <Image
+          src="/illustrations/republic-square-empty.jpg"
+          alt="A man waiting on a bench in Republic Square"
+          width={1024}
+          height={558}
+          className="mb-5 h-28 w-full rounded-2xl object-cover"
+        />
+      ) : null}
       <p className="max-w-xs text-sm leading-6 text-paper-2">
         {mode === "now"
           ? "Quiet right now near you. Be the first to post."

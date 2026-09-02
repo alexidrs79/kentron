@@ -4,7 +4,7 @@
 
 Kentron is a map-first guide to what is happening in Yerevan. It has two distinct time states presented through one segmented control: “Right now” for ephemeral live posts and “This week” for planned events. The interface must feel geographic and local, not like a social feed or generic event SaaS.
 
-Phase 4 is the create flow only: one branching question, a short live-post form, a fuller planned-event form, and map-pin placement. State stays fake and local. Do not add illustrations, database, auth, or later-phase features.
+Phase 5 integrates the supplied Yerevan illustration set into auth, empty, create-branch, and error states, plus the supplied pin logo and simple initial-circle identities. Do not add database wiring, authentication behavior, or later-phase features.
 
 ## Visual direction
 
@@ -81,6 +81,13 @@ Phase 4 create rules:
 - Happening now stays short: required photo, short character-limited caption, category, drag-to-place pin, post. Completable in under a minute. No extra fields.
 - Planned for later: title, category, date/time in Armenia time, venue with pin placement plus optional address suggestions, description, optional photo, optional weekly-meetup flag that saves a reusable draft rather than an automated series.
 - Live pins on the picker are apricot. Planned pins follow the three category shapes/colors. No illustrations on the branch screen yet.
+
+Phase 5 illustration rules:
+
+- Use the supplied scenes as generous page content, never avatars or decorative thumbnails.
+- Cascade walker belongs to login/signup; Republic Square bench to the empty live view; Vernissage browsing to empty Saved; the split street scene to the create branch; Kond map reader to 404/error.
+- Use the supplied mountain pin as the product mark. Preserve the Armenian wordmark beside it on desktop.
+- Anonymous live posts use one fixed neutral person icon. Planned events use the first letter of the organizer name.
 
 ## Motion and accessibility
 
