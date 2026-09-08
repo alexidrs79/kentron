@@ -1,39 +1,48 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { attachCartoKey, loadCartoDuskStyle } from "@/lib/map/carto-dusk";
-import { duskStyle } from "@/lib/map/dusk-style";
+import { useEffect, useRef, useState } from "react";
+import { useLocale } from "@/components/locale-provider";
+import { usePreferences } from "@/components/preferences";
+import {
+  attachCartoKey,
+  loadCartoDayStyle,
+  loadCartoDuskStyle,
+} from "@/lib/map/carto-dusk";
+import { dayStyle, duskStyle } from "@/lib/map/dusk-style";
 import type { EventCategory } from "@/lib/map/fixtures";
+import { pinDataUrl } from "@/lib/map/pin-images";
 
 const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY;
-
-const pinColor: Record<EventCategory | "live", string> = {
-  live: "#E8A23D",
-  tech: "#6E8FBF",
-  creative: "#B87FA8",
-  market: "#7FA87A",
-};
 
 export function PinPicker({
   value,
   onChange,
-  accent,
+  category,
   label,
+  hint,
 }: {
   value: readonly [number, number];
   onChange: (coordinates: readonly [number, number]) => void;
-  accent: EventCategory | "live";
+  category: EventCategory;
   label: string;
+  hint?: string;
 }) {
+  const { locale } = useLocale();
+  const [loaded, setLoaded] = useState(false);
   const mapElement = useRef<HTMLDivElement>(null);
   const markerRef = useRef<import("maplibre-gl").Marker | null>(null);
+  const markerImageRef = useRef<HTMLImageElement | null>(null);
+  const { resolvedTheme } = usePreferences();
   const onChangeRef = useRef(onChange);
   const valueRef = useRef(value);
+  const categoryRef = useRef(category);
   onChangeRef.current = onChange;
   valueRef.current = value;
+  categoryRef.current = category;
 
   useEffect(() => {
     if (!mapElement.current) return;
+    setLoaded(false);
 
     let disposed = false;
     let map: import("maplibre-gl").Map | undefined;
@@ -41,9 +50,14 @@ export function PinPicker({
     void import("maplibre-gl").then(async ({ Map, Marker, setWorkerUrl }) => {
       if (disposed || !mapElement.current) return;
       setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
-      const style = CARTO_KEY
-        ? await loadCartoDuskStyle(CARTO_KEY).catch(() => duskStyle)
-        : duskStyle;
+      const style =
+        resolvedTheme === "light"
+          ? CARTO_KEY
+            ? await loadCartoDayStyle(CARTO_KEY).catch(() => dayStyle)
+            : dayStyle
+          : CARTO_KEY
+            ? await loadCartoDuskStyle(CARTO_KEY).catch(() => duskStyle)
+            : duskStyle;
       if (disposed || !mapElement.current) return;
 
       map = new Map({
@@ -55,9 +69,41 @@ export function PinPicker({
         transformRequest: (url) =>
           CARTO_KEY ? attachCartoKey(url, CARTO_KEY) : undefined,
       });
+      map.once("load", () => {
+        if (!disposed) setLoaded(true);
+      });
+
+      const canvas = map.getCanvas();
+      canvas.tabIndex = 0;
+      canvas.setAttribute(
+        "aria-keyshortcuts",
+        "ArrowLeft ArrowRight ArrowUp ArrowDown",
+      );
+      canvas.addEventListener("keydown", (event) => {
+        const step = event.shiftKey ? 0.001 : 0.0002;
+        const [lng, lat] = valueRef.current;
+        let next: [number, number] | null = null;
+        if (event.key === "ArrowLeft") next = [lng - step, lat];
+        if (event.key === "ArrowRight") next = [lng + step, lat];
+        if (event.key === "ArrowUp") next = [lng, lat + step];
+        if (event.key === "ArrowDown") next = [lng, lat - step];
+        if (!next) return;
+        event.preventDefault();
+        markerRef.current?.setLngLat(next);
+        onChangeRef.current(next);
+      });
+
+      const markerImage = document.createElement("img");
+      markerImage.src = pinDataUrl(categoryRef.current, resolvedTheme);
+      markerImage.alt = "";
+      markerImage.draggable = false;
+      markerImage.style.width = "32px";
+      markerImage.style.height = "40px";
+      markerImageRef.current = markerImage;
 
       const marker = new Marker({
-        color: pinColor[accent],
+        element: markerImage,
+        anchor: "bottom",
         draggable: true,
       })
         .setLngLat([...valueRef.current])
@@ -78,25 +124,45 @@ export function PinPicker({
       disposed = true;
       markerRef.current?.remove();
       markerRef.current = null;
+      markerImageRef.current = null;
       map?.remove();
     };
-  }, [accent]);
+  }, [resolvedTheme]);
 
   useEffect(() => {
     markerRef.current?.setLngLat([...value]);
   }, [value]);
 
+  useEffect(() => {
+    if (markerImageRef.current) {
+      markerImageRef.current.src = pinDataUrl(category, resolvedTheme);
+    }
+  }, [category, resolvedTheme]);
+
   return (
     <div>
-      <p className="mb-2 text-sm text-paper">{label}</p>
+      <p className="mb-1.5 text-[13px] font-semibold text-fg">{label}</p>
+      {/* .kentron-map fills its parent, so the height lives on the frame. */}
       <div
-        ref={mapElement}
-        className="kentron-map h-56 overflow-hidden rounded-2xl border border-line"
-        aria-label={label}
-      />
-      <p className="mt-2 font-mono text-[11px] text-paper-2">
-        Drag the pin, or tap the map. {value[1].toFixed(4)}° N,{" "}
-        {value[0].toFixed(4)}° E
+        className="relative h-56 overflow-hidden rounded-panel border border-line md:h-64"
+        aria-busy={!loaded}
+      >
+        <div ref={mapElement} className="kentron-map" aria-label={label} />
+        {!loaded ? (
+          <div className="map-veil pointer-events-none absolute inset-0 bg-raised">
+            <span className="sr-only">
+              {locale === "hy" ? "Քարտեզը բեռնվում է…" : "Loading map…"}
+            </span>
+          </div>
+        ) : null}
+      </div>
+      <p className="mt-1.5 text-[12px] tabular-nums text-dim">
+        {hint
+          ? `${hint} · `
+          : locale === "hy"
+            ? "Քաշեք նշիչը, սեղմեք քարտեզին կամ օգտագործեք սլաքները · "
+            : "Drag the pin, tap the map, or use arrow keys · "}
+        {value[1].toFixed(4)}° N, {value[0].toFixed(4)}° E
       </p>
     </div>
   );

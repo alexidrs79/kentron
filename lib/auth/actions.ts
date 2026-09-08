@@ -1,12 +1,9 @@
 "use server";
 
-import { hash } from "bcryptjs";
-import { eq } from "drizzle-orm";
-import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 import { z } from "zod";
-import { signIn, signOut } from "@/auth";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { safeReturnTo } from "@/lib/auth/paths";
+import { createClient } from "@/lib/supabase/server";
 
 const signupSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -28,18 +25,14 @@ export async function loginAction(formData: FormData) {
     return { error: "Enter a valid email and password." };
   }
 
-  try {
-    await signIn("credentials", {
-      email: parsed.data.email,
-      password: parsed.data.password,
-      redirectTo: "/profile",
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: "Email or password did not match." };
-    }
-    throw error;
-  }
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
+  if (error) return { error: "Email or password did not match." };
+
+  redirect(safeReturnTo(formData.get("returnTo")));
 }
 
 export async function signupAction(formData: FormData) {
@@ -52,37 +45,60 @@ export async function signupAction(formData: FormData) {
     return { error: "Name, email, and an 8-character password are required." };
   }
 
-  const email = parsed.data.email.toLowerCase();
-  const [existing] = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-  if (existing) {
-    return { error: "An account with that email already exists." };
-  }
-
-  await db.insert(users).values({
-    id: `user-${crypto.randomUUID()}`,
-    name: parsed.data.name,
-    email,
-    passwordHash: await hash(parsed.data.password, 10),
+  const next = safeReturnTo(formData.get("returnTo"));
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email.toLowerCase(),
+    password: parsed.data.password,
+    options: {
+      data: { display_name: parsed.data.name },
+      emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
   });
-
-  try {
-    await signIn("credentials", {
-      email,
-      password: parsed.data.password,
-      redirectTo: "/profile",
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: "Account created, but login failed." };
+  if (error) {
+    const message = error.message.toLowerCase();
+    if (message.includes("already registered")) {
+      return { error: "An account with that email already exists." };
     }
-    throw error;
+    if (message.includes("email")) {
+      return { error: "Enter a deliverable email address." };
+    }
+    if (message.includes("password")) {
+      return {
+        error: "Use a stronger password with at least eight characters.",
+      };
+    }
+    return { error: "The account could not be created. Try again." };
   }
+
+  if (!data.session) {
+    return {
+      success: "Account created. Check your email to confirm it, then log in.",
+    };
+  }
+
+  redirect(next);
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const parsed = z.string().trim().email().safeParse(formData.get("email"));
+  if (!parsed.success) return { error: "Enter a valid email address." };
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.toLowerCase(),
+    { redirectTo: `${site}/auth/callback?next=/reset-password` },
+  );
+  if (error) return { error: "The reset email could not be sent." };
+  return {
+    success: "If that email has an account, a reset link is on its way.",
+  };
 }
 
 export async function signOutAction() {
-  await signOut({ redirectTo: "/login" });
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
 }

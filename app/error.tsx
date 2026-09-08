@@ -1,33 +1,39 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
+import { Button, buttonClass } from "@/components/ui/button";
+import { useLocale } from "@/components/locale-provider";
+import { Page } from "@/components/ui/page";
 
-export default function ErrorPage({ reset }: { reset: () => void }) {
+export default function ErrorPage({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  const { locale, t } = useLocale();
   return (
-    <section className="grid min-h-[calc(100dvh-72px)] place-items-center px-5 py-8 md:min-h-dvh md:px-10">
-      <div className="w-full max-w-2xl text-center">
-        <Image
-          src="/illustrations/kond-lost.jpg"
-          alt="A man trying to find his way through Kond"
-          width={1024}
-          height={558}
-          className="aspect-[16/8] w-full rounded-3xl border border-line object-cover"
-        />
-        <p className="mt-8 font-mono text-[11px] text-paper-2">Error</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em]">
-          Lost the thread.
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-paper-2">
-          The map is still where we left it.
+    <Page width="read">
+      <div className="max-w-[52ch]">
+        <h1 className="type-display">{t("lostThread")}</h1>
+        <p className="type-body mt-3 text-dim">
+          {locale === "hy"
+            ? "Քարտեզը դեռ այնտեղ է։ Կրկին փորձեք այս էջը կամ վերադարձեք քարտեզին։"
+            : "The map is still where we left it. Try this page again, or go back to it."}
         </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-6 inline-flex min-h-11 items-center rounded-xl border border-line px-5 text-sm font-medium transition-colors hover:bg-line"
-        >
-          Try again
-        </button>
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Button onClick={reset}>{t("tryAgain")}</Button>
+          <Link href="/" className={buttonClass({ tone: "secondary" })}>
+            {t("openMap")}
+          </Link>
+        </div>
+        {error.digest ? (
+          <p className="type-meta mt-6 border-t border-line pt-4 text-dim">
+            {locale === "hy" ? "Հղում" : "Reference"} {error.digest}
+          </p>
+        ) : null}
       </div>
-    </section>
+    </Page>
   );
 }

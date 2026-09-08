@@ -2,135 +2,154 @@
 
 import {
   Bookmark,
-  CirclePlus,
-  Map,
+  Map as MapIcon,
+  Plus,
   Search,
+  Settings,
   UserRound,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { KentronMark } from "@/components/logo";
+import { useLocale } from "@/components/locale-provider";
 
-const navigation = [
-  { label: "Map", href: "/", icon: Map },
-  { label: "Search", href: "/search", icon: Search },
-  { label: "Create", href: "/create", icon: CirclePlus, emphasized: true },
-  { label: "Saved", href: "/saved", icon: Bookmark },
-  { label: "Profile", href: "/profile", icon: UserRound },
-];
+const primaryNav = [
+  { key: "navMap", href: "/", icon: MapIcon, emphasized: false },
+  { key: "navSearch", href: "/search", icon: Search, emphasized: false },
+  { key: "navCreate", href: "/create", icon: Plus, emphasized: true },
+  { key: "navSaved", href: "/saved", icon: Bookmark, emphasized: false },
+  { key: "navProfile", href: "/profile", icon: UserRound, emphasized: false },
+] as const;
 
 function isCurrent(pathname: string, href: string) {
   return href === "/" ? pathname === href : pathname.startsWith(href);
 }
 
-function YerevanClock() {
-  const [time, setTime] = useState("—:—:—");
-
-  useEffect(() => {
-    const formatter = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Yerevan",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-    const update = () => setTime(formatter.format(new Date()));
-
-    update();
-    const interval = window.setInterval(update, 1_000);
-    return () => window.clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="font-mono text-[11px] leading-5 text-paper-2">
-      <p>Yerevan time</p>
-      <time className="text-sm text-paper">{time}</time>
-    </div>
-  );
-}
-
-function Brand() {
-  return (
-    <Link href="/" className="flex items-center gap-3" aria-label="Kentron home">
-      <Image
-        src="/illustrations/kentron-pin.jpg"
-        alt=""
-        width={40}
-        height={40}
-        priority
-        className="size-8 rounded-xl object-cover"
-      />
-      <span className="armenian text-xl font-semibold tracking-[-0.03em]">
-        Կենտրոն
-      </span>
-    </Link>
-  );
-}
-
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { locale, t } = useLocale();
+  const settingsCurrent = isCurrent(pathname, "/settings");
+
+  // Auth is a full-bleed moment with no navigation to compete with it.
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password"
+  ) {
+    return <div className="min-h-dvh bg-canvas text-fg">{children}</div>;
+  }
 
   return (
-    <div className="min-h-dvh bg-dusk text-paper md:grid md:grid-cols-[208px_1fr]">
-      <aside className="relative z-[1000] hidden min-h-dvh flex-col border-r border-line bg-dusk px-5 py-6 md:flex">
-        <Brand />
-        <nav className="mt-12 flex flex-1 flex-col gap-1.5" aria-label="Primary">
-          {navigation.map((item) => {
-            const current = isCurrent(pathname, item.href);
-            const Icon = item.icon;
+    <div className="min-h-dvh bg-canvas text-fg">
+      <a
+        href="#kentron-main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[1200] focus:rounded-ctl focus:bg-apricot focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-on-apricot"
+      >
+        {t("skip")}
+      </a>
+      {/* Desktop: a dock that floats over the canvas instead of a docked rail. */}
+      <nav
+        aria-label={locale === "hy" ? "Հիմնական" : "Primary"}
+        className="fixed left-4 top-1/2 z-[1000] hidden w-[60px] -translate-y-1/2 flex-col items-center gap-1 rounded-[20px] border border-line bg-panel py-2.5 shadow-float md:flex"
+      >
+        <Link
+          href="/"
+          aria-label={locale === "hy" ? "Կենտրոնի գլխավոր էջ" : "Kentron home"}
+          className="mb-1 grid size-11 place-items-center"
+        >
+          <KentronMark className="h-8 w-auto" />
+        </Link>
+
+        {primaryNav.map((item) => {
+          const current = isCurrent(pathname, item.href);
+          const Icon = item.icon;
+          const label = t(item.key);
+
+          if (item.emphasized) {
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                aria-current={current ? "page" : undefined}
-                className={`flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors ${
-                  item.emphasized
-                    ? "my-2 bg-tuff text-dusk hover:bg-[#df7668]"
-                    : current
-                      ? "border border-line bg-surface text-paper"
-                      : "border border-transparent text-paper-2 hover:bg-surface/55 hover:text-paper"
-                }`}
+                title={label}
+                className="my-1 grid size-11 place-items-center rounded-full bg-apricot text-on-apricot hover:bg-apricot-soft"
               >
-                <Icon size={19} strokeWidth={1.75} aria-hidden />
-                {item.label}
+                <Icon size={20} strokeWidth={2.1} aria-hidden />
+                <span className="sr-only">{label}</span>
               </Link>
             );
-          })}
-        </nav>
-        <YerevanClock />
-      </aside>
+          }
 
-      <main className="min-h-dvh min-w-0 pb-[72px] md:pb-0">{children}</main>
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={label}
+              aria-current={current ? "page" : undefined}
+              className={`grid size-11 place-items-center rounded-[11px] ${
+                current
+                  ? "bg-raised text-fg"
+                  : "text-dim hover:bg-raised/70 hover:text-fg"
+              }`}
+            >
+              <Icon size={19} strokeWidth={1.8} aria-hidden />
+              <span className="sr-only">{label}</span>
+            </Link>
+          );
+        })}
 
+        <span aria-hidden className="my-1.5 h-px w-6 bg-line" />
+
+        <Link
+          href="/settings"
+          title={t("navSettings")}
+          aria-current={settingsCurrent ? "page" : undefined}
+          className={`grid size-11 place-items-center rounded-[11px] ${
+            settingsCurrent
+              ? "bg-raised text-fg"
+              : "text-dim hover:bg-raised/70 hover:text-fg"
+          }`}
+        >
+          <Settings size={18} strokeWidth={1.8} aria-hidden />
+          <span className="sr-only">{t("navSettings")}</span>
+        </Link>
+      </nav>
+
+      <div id="kentron-main" className="min-h-dvh min-w-0 pb-[76px] md:pb-0">
+        {children}
+      </div>
+
+      {/* Phone: a tab bar on the same dark scale. */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-[1000] grid h-[72px] grid-cols-5 border-t border-line bg-dusk/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
-        aria-label="Primary"
+        aria-label={locale === "hy" ? "Հիմնական" : "Primary"}
+        className="fixed inset-x-0 bottom-0 z-[1000] grid h-[76px] grid-cols-5 border-t border-line bg-panel px-1 pb-[env(safe-area-inset-bottom)] md:hidden"
       >
-        {navigation.map((item) => {
+        {primaryNav.map((item) => {
           const current = isCurrent(pathname, item.href);
           const Icon = item.icon;
+          const label = t(item.key);
           return (
             <Link
               key={item.href}
               href={item.href}
               aria-current={current ? "page" : undefined}
-              className={`relative flex min-w-0 flex-col items-center justify-center gap-1 text-[10px] font-medium ${
-                item.emphasized ? "-translate-y-3" : ""
-              } ${current ? "text-paper" : "text-paper-2"}`}
+              className={`type-data flex min-h-11 min-w-0 flex-col items-center justify-center gap-1 pt-1 ${
+                current ? "text-fg" : "text-dim"
+              }`}
             >
               <span
-                className={`grid size-10 place-items-center rounded-full ${
+                className={`grid h-8 w-9 place-items-center rounded-[10px] ${
                   item.emphasized
-                    ? "bg-tuff text-dusk shadow-[0_10px_28px_rgb(0_0_0/0.28)]"
+                    ? "bg-apricot text-on-apricot"
                     : current
-                      ? "bg-surface"
+                      ? "bg-raised"
                       : ""
                 }`}
               >
-                <Icon size={19} strokeWidth={1.75} aria-hidden />
+                <Icon size={18} strokeWidth={1.9} aria-hidden />
               </span>
-              <span>{item.label}</span>
+              {label}
             </Link>
           );
         })}

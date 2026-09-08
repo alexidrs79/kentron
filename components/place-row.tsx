@@ -1,57 +1,97 @@
+import Image from "next/image";
 import Link from "next/link";
-import { UserRound } from "lucide-react";
+import type { ReactNode } from "react";
+import { imageTreatment } from "@/lib/content";
+import { categoryColor } from "@/lib/map/categories";
+import type { EventCategory } from "@/lib/map/fixtures";
 
-const accents = {
-  live: "bg-apricot/15 text-apricot",
-  tech: "bg-pin-tech/20 text-pin-tech",
-  creative: "bg-pin-creative/20 text-pin-creative",
-  market: "bg-pin-market/20 text-pin-market",
-} as const;
-
+/**
+ * One row language for the whole product. The lead column carries the time
+ * (planned) or the age (live), so either timeline scans down a single edge.
+ * A thumbnail is optional: lists that are about places show one, dense
+ * utility lists do not.
+ */
 export function PlaceRow({
   href,
-  initial,
-  accent,
+  lead,
   title,
   meta,
-  chip,
-  anonymous = false,
+  image,
+  trailing,
+  live = false,
+  selected = false,
+  opacity,
+  rowId,
+  category,
 }: {
   href: string;
-  initial: string;
-  accent: keyof typeof accents;
+  lead: string;
   title: string;
   meta: string;
-  chip?: string;
-  anonymous?: boolean;
+  image?: string;
+  trailing?: ReactNode;
+  live?: boolean;
+  selected?: boolean;
+  /** Age fade for live posts, mirroring the marker fade. */
+  opacity?: number;
+  rowId?: string;
+  category?: EventCategory;
 }) {
   return (
-    <Link
-      href={href}
-      className="flex min-h-14 items-center gap-3 rounded-2xl px-1 py-2 transition-colors hover:bg-line/50"
+    <div
+      id={rowId}
+      className={`flex items-stretch gap-3 ${
+        selected ? "bg-raised" : "hover:bg-raised/60"
+      }`}
     >
-      <span
-        className={`grid size-10 shrink-0 place-items-center rounded-full text-sm font-semibold ${accents[accent]}`}
+      <Link
+        href={href}
+        aria-current={selected ? "true" : undefined}
+        className={`flex min-w-0 flex-1 gap-3 py-3 pl-4 pr-2 ${
+          image ? "items-center md:gap-3.5" : "items-baseline md:gap-4"
+        }`}
+        style={opacity ? { opacity } : undefined}
       >
-        {anonymous ? (
-          <UserRound size={17} strokeWidth={1.75} aria-label="Anonymous" />
-        ) : (
-          initial
-        )}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium text-paper">
-          {title}
+        {image ? (
+          <Image
+            src={image}
+            alt=""
+            width={160}
+            height={120}
+            className={`aspect-[4/3] w-14 shrink-0 rounded-thumb object-cover shadow-thumb ${imageTreatment(image)}`}
+          />
+        ) : null}
+        <span className="min-w-0 flex-1">
+          <span
+            className={`type-meta flex items-center gap-1.5 ${
+              live ? "text-apricot" : "text-dim"
+            }`}
+          >
+            {category ? (
+              <span
+                aria-hidden
+                className="size-2 shrink-0 rounded-full"
+                style={{ backgroundColor: categoryColor(category) }}
+              />
+            ) : null}
+            {lead}
+          </span>
+          <span className="mt-[3px] line-clamp-2 block text-[15px] font-medium leading-[1.32] tracking-[-0.01em]">
+            {title}
+          </span>
+          <span className="type-meta mt-1 block truncate text-dim">
+            {meta}
+          </span>
         </span>
-        <span className="mt-0.5 block truncate font-mono text-[11px] text-paper-2">
-          {meta}
-        </span>
-      </span>
-      {chip ? (
-        <span className="shrink-0 rounded-full border border-line px-2 py-1 text-[11px] text-paper-2">
-          {chip}
-        </span>
+      </Link>
+      {trailing ? (
+        <div className="flex shrink-0 items-center pr-2.5">{trailing}</div>
       ) : null}
-    </Link>
+    </div>
   );
+}
+
+/** The hairline stack rows sit in, so a list reads as one column. */
+export function RowStack({ children }: { children: ReactNode }) {
+  return <div className="divide-y divide-line/70">{children}</div>;
 }

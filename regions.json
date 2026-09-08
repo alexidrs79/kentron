@@ -1,0 +1,144 @@
+{
+  "regions": [
+    {
+      "id": "dock",
+      "kind": "chrome",
+      "grid": "A2:A6",
+      "note": "existing floating Kentron navigation dock"
+    },
+    {
+      "id": "search-control",
+      "kind": "control",
+      "grid": "B1:F1",
+      "note": "large bordered Search Yerevan input with search icon"
+    },
+    {
+      "id": "timeline-control",
+      "kind": "control",
+      "grid": "H1:I1",
+      "note": "compact Right now and This week segmented control"
+    },
+    {
+      "id": "result-count",
+      "kind": "text",
+      "grid": "J1:J1",
+      "note": "24 results metadata"
+    },
+    {
+      "id": "featured-panel",
+      "kind": "chrome",
+      "grid": "B2:F9",
+      "note": "single rounded featured result surface with sparse border and footer rule",
+      "container": true
+    },
+    {
+      "id": "featured-art",
+      "kind": "plate",
+      "grid": "B2:F6",
+      "note": "night-time illustrated Yerevan courtyard cinema scene with seated audience and projector screen",
+      "bleed": true
+    },
+    {
+      "id": "featured-time",
+      "kind": "text",
+      "grid": "B7:B7",
+      "note": "21:00 in apricot tabular type"
+    },
+    {
+      "id": "featured-title",
+      "kind": "text",
+      "grid": "B7:D7",
+      "note": "Open courtyard screening lead title"
+    },
+    {
+      "id": "featured-venue",
+      "kind": "text",
+      "grid": "B8:B8",
+      "note": "Kond venue metadata"
+    },
+    {
+      "id": "featured-details",
+      "kind": "text",
+      "grid": "B8:D8",
+      "note": "Film screening, Outdoor, 120 min metadata"
+    },
+    {
+      "id": "featured-action",
+      "kind": "control",
+      "grid": "B9:F9",
+      "note": "View details footer link with arrow"
+    },
+    {
+      "id": "today-heading",
+      "kind": "text",
+      "grid": "G2:J2",
+      "note": "Today group heading with horizontal rule"
+    },
+    {
+      "id": "today-art-one",
+      "kind": "image",
+      "grid": "G2:G3",
+      "note": "small illustrated Yerevan night event thumbnail"
+    },
+    {
+      "id": "today-row-one",
+      "kind": "text",
+      "grid": "H3:J3",
+      "note": "19:00, Duduk and guitar on the upper Cascade steps, Cascade"
+    },
+    {
+      "id": "today-art-two",
+      "kind": "image",
+      "grid": "G4:G4",
+      "note": "small illustrated dancing near Yerevan fountains thumbnail"
+    },
+    {
+      "id": "today-row-two",
+      "kind": "text",
+      "grid": "H4:J4",
+      "note": "20:30, A small dance circle formed by the fountains, Cascade"
+    },
+    {
+      "id": "friday-heading",
+      "kind": "text",
+      "grid": "G5:J5",
+      "note": "Friday group heading with horizontal rule"
+    },
+    {
+      "id": "friday-art",
+      "kind": "image",
+      "grid": "G6:G6",
+      "note": "small illustrated Swan Lake at dusk thumbnail"
+    },
+    {
+      "id": "friday-row",
+      "kind": "text",
+      "grid": "H6:J6",
+      "note": "18:00, Three chess boards out by Swan Lake, Swan Lake"
+    },
+    {
+      "id": "saturday-heading",
+      "kind": "text",
+      "grid": "G7:J7",
+      "note": "Saturday group heading with horizontal rule"
+    },
+    {
+      "id": "saturday-art",
+      "kind": "image",
+      "grid": "G7:G8",
+      "note": "small illustrated indoor brass performance thumbnail"
+    },
+    {
+      "id": "saturday-row",
+      "kind": "text",
+      "grid": "H8:J8",
+      "note": "17:00, Brass trio playing beside the History Museum, Republic Square"
+    },
+    {
+      "id": "more-action",
+      "kind": "control",
+      "grid": "G9:H9",
+      "note": "See more this week text action with arrow"
+    }
+  ]
+}

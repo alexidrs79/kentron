@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780">
+  <defs>
+    <filter id="shadow" x="-80%" y="-80%" width="260%" height="260%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".42"/>
+    </filter>
+    <filter id="glowBlue" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+    <filter id="glowRed" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+    <filter id="glowGold" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+
+    <g id="tech" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="-12" y="-12" width="24" height="24" rx="5"/>
+      <path d="M-4-4h8v8h-8zM-17-6h5M-17 0h5M-17 6h5M12-6h5M12 0h5M12 6h5M-6-17v5M0-17v5M6-17v5M-6 12v5M0 12v5M6 12v5"/>
+    </g>
+    <g id="arts" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0-17 4-5 16 0 4 5 0 17-4 5-16 0-4-5Z"/>
+      <circle cx="0" cy="0" r="3" fill="currentColor" stroke="none"/>
+    </g>
+    <g id="market" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-16-5h32M-13-5v18M13-5v18M-17 13h34M-15-14h30l2 9h-34z"/>
+      <path d="M-8-5v5a4 4 0 0 0 8 0v-5M0-5v5a4 4 0 0 0 8 0v-5"/>
+    </g>
+
+    <style>
+      .title { font: 600 34px Arial, sans-serif; fill: #F7F3EC; letter-spacing: -.7px }
+      .subtitle { font: 400 15px Arial, sans-serif; fill: #A69E93 }
+      .name { font: 600 21px Arial, sans-serif; fill: #F7F3EC }
+      .desc { font: 400 13px Arial, sans-serif; fill: #A69E93 }
+      .micro { font: 600 11px Arial, sans-serif; fill: #F5A65B; letter-spacing: .8px }
+    </style>
+  </defs>
+
+  <rect width="1200" height="780" fill="#121110"/>
+  <text x="54" y="63" class="title">Kentron marker directions</text>
+  <text x="54" y="91" class="subtitle">The icon system stays constant: circuit = Technology, spark = Arts &amp; culture, awning = Markets &amp; community.</text>
+
+  <!-- A -->
+  <g transform="translate(54 132)">
+    <rect width="532" height="270" rx="22" fill="#1F1D1A" stroke="#3A352F"/>
+    <text x="26" y="38" class="micro">A � RECOMMENDED</text>
+    <text x="26" y="68" class="name">Civic medallion</text>
+    <text x="26" y="91" class="desc">Circular city tokens with a tiny locator notch.</text>
+
+    <g transform="translate(125 169)" filter="url(#shadow)">
+      <path d="M0 39 8 29H-8Z" fill="#15130F"/>
+      <circle r="39" fill="#6689D8" stroke="#15130F" stroke-width="4"/>
+      <g color="#fff"><use href="#tech"/></g>
+    </g>
+    <g transform="translate(266 169)" filter="url(#shadow)">
+      <circle r="55" fill="#D96B62" opacity=".28" filter="url(#glowRed)"/>
+      <path d="M0 39 8 29H-8Z" fill="#15130F"/>
+      <circle r="39" fill="#D96B62" stroke="#15130F" stroke-width="4"/>
+      <g color="#fff"><use href="#arts"/></g>
+      <circle cx="28" cy="-28" r="8" fill="#F5A65B" stroke="#15130F" stroke-width="3"/>
+    </g>
+    <g transform="translate(407 169)" filter="url(#shadow)">
+      <path d="M0 39 8 29H-8Z" fill="#15130F"/>
+      <circle r="39" fill="#E6A454" stroke="#15130F" stroke-width="4"/>
+      <g color="#15130F"><use href="#market"/></g>
+    </g>
+    <text x="236" y="244" class="micro">LIVE</text>
+  </g>
+
+  <!-- B -->
+  <g transform="translate(614 132)">
+    <rect width="532" height="270" rx="22" fill="#1F1D1A" stroke="#3A352F"/>
+    <text x="26" y="38" class="micro">B</text>
+    <text x="26" y="68" class="name">Wayfinding shield</text>
+    <text x="26" y="91" class="desc">A sturdier sign shape with a short map point.</text>
+
+    <g transform="translate(125 165)" filter="url(#shadow)">
+      <path d="M-38-34Q0-48 38-34V13Q27 32 0 47-27 32-38 13Z" fill="#6689D8" stroke="#F7F3EC" stroke-width="3"/>
+      <g color="#fff"><use href="#tech"/></g>
+    </g>
+    <g transform="translate(266 165)" filter="url(#shadow)">
+      <circle r="56" fill="#D96B62" opacity=".25" filter="url(#glowRed)"/>
+      <path d="M-38-34Q0-48 38-34V13Q27 32 0 47-27 32-38 13Z" fill="#D96B62" stroke="#F7F3EC" stroke-width="3"/>
+      <g color="#fff"><use href="#arts"/></g>
+      <circle cx="29" cy="-29" r="8" fill="#F5A65B" stroke="#15130F" stroke-width="3"/>
+    </g>
+    <g transform="translate(407 165)" filter="url(#shadow)">
+      <path d="M-38-34Q0-48 38-34V13Q27 32 0 47-27 32-38 13Z" fill="#E6A454" stroke="#F7F3EC" stroke-width="3"/>
+      <g color="#15130F"><use href="#market"/></g>
+    </g>
+    <text x="236" y="244" class="micro">LIVE</text>
+  </g>
+
+  <!-- C -->
+  <g transform="translate(54 430)">
+    <rect width="532" height="270" rx="22" fill="#1F1D1A" stroke="#3A352F"/>
+    <text x="26" y="38" class="micro">C</text>
+    <text x="26" y="68" class="name">Map aperture</text>
+    <text x="26" y="91" class="desc">A precise double-ring lens that feels map-native.</text>
+
+    <g transform="translate(125 169)" filter="url(#shadow)">
+      <circle r="39" fill="#15130F" stroke="#6689D8" stroke-width="5"/>
+      <circle r="30" fill="#6689D8"/>
+      <g color="#fff" transform="scale(.82)"><use href="#tech"/></g>
+    </g>
+    <g transform="translate(266 169)" filter="url(#shadow)">
+      <circle r="56" fill="#D96B62" opacity=".28" filter="url(#glowRed)"/>
+      <circle r="39" fill="#15130F" stroke="#D96B62" stroke-width="5"/>
+      <circle r="30" fill="#D96B62"/>
+      <g color="#fff" transform="scale(.82)"><use href="#arts"/></g>
+      <circle cx="28" cy="-28" r="8" fill="#F5A65B" stroke="#15130F" stroke-width="3"/>
+    </g>
+    <g transform="translate(407 169)" filter="url(#shadow)">
+      <circle r="39" fill="#15130F" stroke="#E6A454" stroke-width="5"/>
+      <circle r="30" fill="#E6A454"/>
+      <g color="#15130F" transform="scale(.82)"><use href="#market"/></g>
+    </g>
+    <text x="236" y="244" class="micro">LIVE</text>
+  </g>
+
+  <!-- D -->
+  <g transform="translate(614 430)">
+    <rect width="532" height="270" rx="22" fill="#1F1D1A" stroke="#3A352F"/>
+    <text x="26" y="38" class="micro">D</text>
+    <text x="26" y="68" class="name">Street sign</text>
+    <text x="26" y="91" class="desc">Rounded tiles with a small category color edge.</text>
+
+    <g transform="translate(125 169)" filter="url(#shadow)">
+      <rect x="-39" y="-39" width="78" height="78" rx="22" fill="#F7F3EC" stroke="#6689D8" stroke-width="5"/>
+      <g color="#263A65"><use href="#tech"/></g>
+    </g>
+    <g transform="translate(266 169)" filter="url(#shadow)">
+      <circle r="56" fill="#D96B62" opacity=".28" filter="url(#glowRed)"/>
+      <rect x="-39" y="-39" width="78" height="78" rx="22" fill="#F7F3EC" stroke="#D96B62" stroke-width="5"/>
+      <g color="#843F39"><use href="#arts"/></g>
+      <circle cx="31" cy="-31" r="8" fill="#F5A65B" stroke="#15130F" stroke-width="3"/>
+    </g>
+    <g transform="translate(407 169)" filter="url(#shadow)">
+      <rect x="-39" y="-39" width="78" height="78" rx="22" fill="#F7F3EC" stroke="#E6A454" stroke-width="5"/>
+      <g color="#62451C"><use href="#market"/></g>
+    </g>
+    <text x="236" y="244" class="micro">LIVE</text>
+  </g>
+
+  <text x="54" y="748" class="subtitle">Live is shown on the centre marker in each set: same shape, same icon, plus a soft category glow and a small apricot status bead.</text>
+</svg>

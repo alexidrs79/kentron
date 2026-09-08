@@ -6,5 +6,8 @@ node_modules/
 *.tsbuildinfo
 .DS_Store
 .superdesign/tmp/
+.cursor/
+.impeccable/
 public/maplibre/
 .data/
+.vercel/

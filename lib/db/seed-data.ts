@@ -25,7 +25,7 @@ export const seedPassword = "cascade-dusk";
 
 export { seedEvents } from "./seed-events";
 
-type Category = "tech" | "creative" | "market";
+type Category = "tech" | "creative" | "music" | "food" | "market" | "outdoors";
 
 export const seedPulses: {
   id: string;
@@ -40,7 +40,7 @@ export const seedPulses: {
     id: "cascade-duduk",
     sessionId: "walk-cascade",
     caption: "Duduk and guitar on the upper Cascade steps",
-    category: "creative",
+    category: "music",
     lat: 40.1909,
     lng: 44.5151,
     postedMinutesAgo: 8,
@@ -67,7 +67,7 @@ export const seedPulses: {
     id: "republic-brass",
     sessionId: "republic-walk",
     caption: "Brass trio playing beside the History Museum",
-    category: "creative",
+    category: "music",
     lat: 40.1778,
     lng: 44.5149,
     postedMinutesAgo: 41,
@@ -85,7 +85,7 @@ export const seedPulses: {
     id: "saryan-pop-up",
     sessionId: "saryan-night",
     caption: "Natural wine bottles and records on Saryan",
-    category: "market",
+    category: "food",
     lat: 40.1848,
     lng: 44.5062,
     postedMinutesAgo: 86,

@@ -5,14 +5,12 @@ import {
   type LivePulse,
   type PlannedEvent,
 } from "@/lib/map/fixtures";
+import { categoryOptions } from "@/lib/map/categories";
 
 export type { EventCategory };
 
-export const categories: { id: EventCategory; label: string }[] = [
-  { id: "tech", label: "Tech" },
-  { id: "creative", label: "Creative" },
-  { id: "market", label: "Market" },
-];
+export const categories: { id: EventCategory; label: string }[] =
+  categoryOptions.map(({ id, label }) => ({ id, label }));
 
 export const knownPlaces = [
   ...plannedEvents.map((item) => ({
@@ -47,7 +45,7 @@ export function formatYerevanWhen(value: string) {
     .replace(",", "");
 }
 
-export function yerevanDateTimeLocal() {
+export function yerevanDateTimeLocal(from?: Date) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Asia/Yerevan",
     year: "numeric",
@@ -56,7 +54,7 @@ export function yerevanDateTimeLocal() {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-  }).formatToParts(new Date());
+  }).formatToParts(from ?? new Date());
   const get = (type: string) =>
     parts.find((part) => part.type === type)?.value ?? "00";
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;

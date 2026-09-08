@@ -9,10 +9,11 @@ export default defineConfig([
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   globalIgnores([
     ".next/**",
+    ".cursor/**",
+    ".impeccable/**",
     "node_modules/**",
     ".superdesign/**",
     "public/**",
-    "drizzle/**",
     "next-env.d.ts",
   ]),
 ]);

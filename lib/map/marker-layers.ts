@@ -1,71 +1,53 @@
-import type { Map } from "maplibre-gl";
+import type { ExpressionSpecification, Map } from "maplibre-gl";
 import {
   eventCollection,
   livePulses,
   plannedEvents,
   pulseCollection,
-  type EventCategory,
   type LivePulse,
   type PlannedEvent,
 } from "./fixtures";
+import { categoryOptions } from "./categories";
 import { bindClusterZoom } from "./marker-interactions";
+import { pinImageId } from "./pin-images";
 
 const PULSE_SOURCE = "kentron-pulses";
 const EVENT_SOURCE = "kentron-events";
 
-const categoryColors: Record<EventCategory, string> = {
-  tech: "#6E8FBF",
-  creative: "#B87FA8",
-  market: "#7FA87A",
-};
+const NIGHT = "#15130F";
+const APRICOT = "#F5A65B";
+const PAPER = "#FBF7F0";
+const INK = "#1A1714";
+const categoryPairs = categoryOptions.flatMap(({ id, color }) => [id, color]);
+const CATEGORY_COLOR = [
+  "match",
+  ["get", "category"],
+  ...categoryPairs,
+  "#F7F3EC",
+] as unknown as ExpressionSpecification;
 
-function markerImage(category: EventCategory) {
-  const size = 48;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext("2d");
-  if (!context) throw new Error("Canvas rendering is unavailable");
+/** Live and planned pins share one sprite set, keyed by category. */
+const PIN_IMAGE = [
+  "match",
+  ["get", "category"],
+  ...categoryOptions.flatMap(({ id }) => [id, pinImageId(id)]),
+  pinImageId("market"),
+] as unknown as ExpressionSpecification;
 
-  context.fillStyle = categoryColors[category];
-  context.strokeStyle = "#EDEFF2";
-  context.lineWidth = 3;
-
-  if (category === "tech") {
-    context.beginPath();
-    context.roundRect(7, 7, 34, 34, 8);
-  } else if (category === "creative") {
-    context.beginPath();
-    context.moveTo(24, 4);
-    context.lineTo(44, 24);
-    context.lineTo(24, 44);
-    context.lineTo(4, 24);
-    context.closePath();
-  } else {
-    context.beginPath();
-    context.arc(24, 24, 18, 0, Math.PI * 2);
-  }
-
-  context.fill();
-  context.stroke();
-  return context.getImageData(0, 0, size, size);
-}
-
-function addMarkerImages(map: Map) {
-  (["tech", "creative", "market"] as EventCategory[]).forEach((category) => {
-    const name = `event-${category}-marker`;
-    if (!map.hasImage(name)) {
-      map.addImage(name, markerImage(category), { pixelRatio: 2 });
-    }
-  });
+/** Clusters carry the apricot accent on both basemaps, never black-on-white. */
+function clusterPaint(theme: "dark" | "light") {
+  return theme === "light"
+    ? { fill: PAPER, stroke: "#DE8C33", text: INK }
+    : { fill: NIGHT, stroke: APRICOT, text: APRICOT };
 }
 
 export function addMarkerLayers(
   map: Map,
   pulses: LivePulse[] = livePulses,
   events: PlannedEvent[] = plannedEvents,
+  theme: "dark" | "light" = "dark",
 ) {
-  addMarkerImages(map);
+  const cluster = clusterPaint(theme);
 
   map.addSource(PULSE_SOURCE, {
     type: "geojson",
@@ -88,9 +70,9 @@ export function addMarkerLayers(
     source: PULSE_SOURCE,
     filter: ["has", "point_count"],
     paint: {
-      "circle-color": "#23283B",
+      "circle-color": cluster.fill,
       "circle-radius": ["step", ["get", "point_count"], 16, 5, 19],
-      "circle-stroke-color": "#E8A23D",
+      "circle-stroke-color": cluster.stroke,
       "circle-stroke-width": 2,
     },
   });
@@ -104,30 +86,34 @@ export function addMarkerLayers(
       "text-font": ["Noto Sans Bold"],
       "text-size": 12,
     },
-    paint: { "text-color": "#F4EFE9" },
+    paint: { "text-color": cluster.text },
   });
+  // The glow sits at the tip of the pin, so live activity reads as light on
+  // the ground rather than a second marker.
   map.addLayer({
     id: "pulse-ring",
     type: "circle",
     source: PULSE_SOURCE,
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#E8A23D",
-      "circle-radius": 16,
-      "circle-opacity": 0.18,
+      "circle-color": CATEGORY_COLOR,
+      "circle-radius": 15,
+      "circle-opacity": 0.24,
+      // Without blur the halo reads as a flat disc rather than light.
+      "circle-blur": 0.7,
     },
   });
   map.addLayer({
     id: "pulse-point",
-    type: "circle",
+    type: "symbol",
     source: PULSE_SOURCE,
     filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#E8A23D",
-      "circle-radius": 6,
-      "circle-opacity": ["get", "opacity"],
-      "circle-stroke-color": "#23283B",
-      "circle-stroke-width": 2,
+    layout: {
+      "icon-image": PIN_IMAGE,
+      "icon-anchor": "bottom",
+      "icon-size": 1,
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
     },
   });
 
@@ -137,10 +123,10 @@ export function addMarkerLayers(
     source: EVENT_SOURCE,
     filter: ["has", "point_count"],
     paint: {
-      "circle-color": "#23283B",
+      "circle-color": cluster.fill,
       "circle-radius": ["step", ["get", "point_count"], 16, 5, 19],
-      "circle-stroke-color": "#EDEFF2",
-      "circle-stroke-width": 1.5,
+      "circle-stroke-color": cluster.stroke,
+      "circle-stroke-width": 2,
     },
   });
   map.addLayer({
@@ -153,25 +139,20 @@ export function addMarkerLayers(
       "text-font": ["Noto Sans Bold"],
       "text-size": 12,
     },
-    paint: { "text-color": "#F4EFE9" },
+    paint: { "text-color": cluster.text },
   });
-
-  (["tech", "creative", "market"] as EventCategory[]).forEach((category) => {
-    map.addLayer({
-      id: `event-${category}`,
-      type: "symbol",
-      source: EVENT_SOURCE,
-      filter: [
-        "all",
-        ["!", ["has", "point_count"]],
-        ["==", ["get", "category"], category],
-      ],
-      layout: {
-        "icon-image": `event-${category}-marker`,
-        "icon-size": 1,
-        "icon-allow-overlap": true,
-      },
-    });
+  map.addLayer({
+    id: "event-point",
+    type: "symbol",
+    source: EVENT_SOURCE,
+    filter: ["!", ["has", "point_count"]],
+    layout: {
+      "icon-image": PIN_IMAGE,
+      "icon-anchor": "bottom",
+      "icon-size": 1,
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+    },
   });
 
   bindClusterZoom(map, "pulse-clusters", PULSE_SOURCE);

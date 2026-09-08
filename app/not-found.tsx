@@ -1,32 +1,49 @@
 import Image from "next/image";
 import Link from "next/link";
+import { buttonClass } from "@/components/ui/button";
+import { Page } from "@/components/ui/page";
+import { getServerLocale } from "@/lib/i18n-server";
+import { t } from "@/lib/i18n";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const locale = await getServerLocale();
   return (
-    <section className="grid min-h-[calc(100dvh-72px)] place-items-center px-5 py-8 md:min-h-dvh md:px-10">
-      <div className="w-full max-w-2xl text-center">
+    <Page width="read">
+      <div className="grid items-center gap-7 sm:grid-cols-[minmax(0,1fr)_280px]">
+        <div>
+          <p className="type-data text-dim">404</p>
+          <h1 className="type-display mt-2">
+            {locale === "hy"
+              ? "Կոնդում սխալ շրջադարձ արեցինք։"
+              : "Took a wrong turn in Kond."}
+          </h1>
+          <p className="type-body mt-3 text-dim">
+            {locale === "hy"
+              ? "Այս էջը քարտեզին չկա։ Այս կողմի փողոցները երբեմն այդպես են շփոթեցնում։"
+              : "This page is not on the map. The streets around here do that to people."}
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link href="/" className={buttonClass({ tone: "primary" })}>
+              {t(locale, "backToMap404")}
+            </Link>
+            <Link href="/search" className={buttonClass({ tone: "secondary" })}>
+              {t(locale, "searchYerevan")}
+            </Link>
+          </div>
+        </div>
         <Image
           src="/illustrations/kond-lost.jpg"
-          alt="A man trying to find his way through Kond"
+          alt={
+            locale === "hy"
+              ? "Կոնդի փողոցներում ճանապարհ որոնող մարդ"
+              : "Someone finding their way through the streets of Kond"
+          }
           width={1024}
-          height={558}
+          height={768}
           priority
-          className="aspect-[16/8] w-full rounded-3xl border border-line object-cover"
+          className="aspect-[4/3] w-full rounded-panel border border-line object-cover"
         />
-        <p className="mt-8 font-mono text-[11px] text-paper-2">404</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em]">
-          Took a turn in Kond.
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-paper-2">
-          This path does not lead anywhere yet.
-        </p>
-        <Link
-          href="/"
-          className="mt-6 inline-flex min-h-11 items-center rounded-xl border border-line px-5 text-sm font-medium transition-colors hover:bg-line"
-        >
-          Back to the map
-        </Link>
       </div>
-    </section>
+    </Page>
   );
 }

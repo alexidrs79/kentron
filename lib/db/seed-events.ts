@@ -1,4 +1,4 @@
-type Category = "tech" | "creative" | "market";
+type Category = "tech" | "creative" | "music" | "food" | "market" | "outdoors";
 type OrganizerId = "user-ani" | "user-narek" | "user-lilit" | "user-aram";
 
 export const seedEvents: {
@@ -18,7 +18,8 @@ export const seedEvents: {
     id: "tumo-ai-lab",
     organizerId: "user-ani",
     title: "Open lab: small models on local hardware",
-    description: "Bring a laptop. TUMO mentors help you run a small model offline.",
+    description:
+      "Bring a laptop. TUMO mentors help you run a small model offline.",
     category: "tech",
     venueName: "TUMO Center for Creative Technologies",
     lat: 40.1945,
@@ -57,7 +58,8 @@ export const seedEvents: {
     id: "armenia-engineering-week",
     organizerId: "user-narek",
     title: "Engineering community meetup",
-    description: "Hardware and firmware people comparing notes at Engineering City.",
+    description:
+      "Hardware and firmware people comparing notes at Engineering City.",
     category: "tech",
     venueName: "Engineering City",
     lat: 40.2105,
@@ -97,7 +99,7 @@ export const seedEvents: {
     organizerId: "user-lilit",
     title: "Chamber music after work",
     description: "A short program in the opera house, then the square.",
-    category: "creative",
+    category: "music",
     venueName: "Armenian National Opera",
     lat: 40.1851,
     lng: 44.5152,
@@ -110,7 +112,7 @@ export const seedEvents: {
     organizerId: "user-lilit",
     title: "ToneLab listening session",
     description: "One record all the way through. Quiet room.",
-    category: "creative",
+    category: "music",
     venueName: "ToneLab",
     lat: 40.1837,
     lng: 44.5122,
@@ -149,7 +151,7 @@ export const seedEvents: {
     organizerId: "user-lilit",
     title: "String quartet at Komitas",
     description: "An hour of chamber music in the small hall.",
-    category: "creative",
+    category: "music",
     venueName: "Komitas Chamber Music House",
     lat: 40.1879,
     lng: 44.5091,
@@ -201,7 +203,7 @@ export const seedEvents: {
     organizerId: "user-aram",
     title: "Saryan street wine tasting",
     description: "Natural wine pours along Saryan before dinner.",
-    category: "market",
+    category: "food",
     venueName: "Saryan Street",
     lat: 40.1853,
     lng: 44.5057,
@@ -214,7 +216,7 @@ export const seedEvents: {
     organizerId: "user-aram",
     title: "Easy five-kilometre city run",
     description: "Meet at the park gate. Walkers welcome.",
-    category: "market",
+    category: "outdoors",
     venueName: "English Park",
     lat: 40.1736,
     lng: 44.5078,
@@ -227,7 +229,7 @@ export const seedEvents: {
     organizerId: "user-aram",
     title: "Saturday pour at In Vino",
     description: "Armenian bottles opened at the counter.",
-    category: "market",
+    category: "food",
     venueName: "In Vino",
     lat: 40.1839,
     lng: 44.5096,

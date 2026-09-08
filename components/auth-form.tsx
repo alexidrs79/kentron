@@ -1,75 +1,118 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useLocale } from "@/components/locale-provider";
+import { FieldLabel, TextInput } from "@/components/ui/field";
 import { loginAction, signupAction } from "@/lib/auth/actions";
+import { localizeServerMessage } from "@/lib/i18n";
 
-const fieldClass =
-  "min-h-11 w-full rounded-xl border border-line bg-dusk px-3 text-sm text-paper outline-none";
-
-export function AuthForm({ mode }: { mode: "login" | "signup" }) {
+export function AuthForm({
+  mode,
+  returnTo,
+}: {
+  mode: "login" | "signup";
+  returnTo?: string;
+}) {
   const signup = mode === "signup";
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [pending, setPending] = useState(false);
+  const { locale, t } = useLocale();
 
   async function onSubmit(formData: FormData) {
     setPending(true);
     setError("");
+    setSuccess("");
     const result = signup
       ? await signupAction(formData)
       : await loginAction(formData);
-    if (result?.error) setError(result.error);
+    if (result?.error) setError(localizeServerMessage(locale, result.error));
+    if (result && "success" in result && result.success) {
+      setSuccess(localizeServerMessage(locale, result.success));
+    }
     setPending(false);
   }
 
   return (
-    <form action={onSubmit} className="mt-8 space-y-5">
+    <form action={onSubmit} className="mt-6 space-y-4">
+      <input type="hidden" name="returnTo" value={returnTo ?? "/profile"} />
       {signup ? (
-        <label className="block">
-          <span className="mb-2 block text-sm">Name</span>
-          <input
+        <FieldLabel
+          label={locale === "hy" ? "Ձեր անունը" : "Your name"}
+          htmlFor="auth-name"
+        >
+          <TextInput
+            id="auth-name"
             name="name"
             required
             minLength={2}
-            className={fieldClass}
             autoComplete="name"
           />
-        </label>
+        </FieldLabel>
       ) : null}
-      <label className="block">
-        <span className="mb-2 block text-sm">Email</span>
-        <input
+      <FieldLabel label={t("email")} htmlFor="auth-email">
+        <TextInput
+          id="auth-email"
           name="email"
-          className={fieldClass}
           type="email"
           required
           autoComplete="email"
         />
-      </label>
-      <label className="block">
-        <span className="mb-2 block text-sm">Password</span>
-        <input
+      </FieldLabel>
+      <FieldLabel
+        label={t("password")}
+        htmlFor="auth-password"
+        hint={
+          signup
+            ? locale === "hy"
+              ? "Առնվազն ութ նիշ։"
+              : "At least eight characters."
+            : undefined
+        }
+      >
+        <TextInput
+          id="auth-password"
           name="password"
-          className={fieldClass}
           type="password"
           required
           minLength={8}
           autoComplete={signup ? "new-password" : "current-password"}
         />
-      </label>
-      {error ? <p className="text-sm text-tuff">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-tuff px-5 text-sm font-medium text-dusk disabled:opacity-60"
-      >
+      </FieldLabel>
+      {!signup ? (
+        <p className="-mt-2 text-[13px]">
+          <a
+            href="/forgot-password"
+            className="font-semibold text-dim hover:text-apricot"
+          >
+            {t("forgotPassword")}
+          </a>
+        </p>
+      ) : null}
+      {error ? (
+        <p role="alert" className="text-[13.5px] font-semibold text-apricot">
+          {error}
+        </p>
+      ) : null}
+      {success ? (
+        <p role="status" className="text-[13.5px] leading-5 text-fg">
+          {success}
+        </p>
+      ) : null}
+      <Button type="submit" size="lg" block disabled={pending}>
         {pending
           ? signup
-            ? "Creating account"
-            : "Signing in"
+            ? locale === "hy"
+              ? "Հաշիվը ստեղծվում է…"
+              : "Creating account…"
+            : locale === "hy"
+              ? "Մուտք է կատարվում…"
+              : "Signing in…"
           : signup
-            ? "Sign up"
-            : "Log in"}
-      </button>
+            ? t("signUp")
+            : t("logIn")}
+      </Button>
     </form>
   );
 }

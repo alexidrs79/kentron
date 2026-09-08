@@ -1,27 +1,92 @@
 @import "tailwindcss";
 @import "maplibre-gl/dist/maplibre-gl.css";
 
+/*
+  Kentron — one dark world.
+  The map is the canvas. Everything else floats over it on the same warm
+  near-black scale, with Armenian apricot as the only accent.
+*/
+
 @theme {
-  --color-dusk: #23283b;
-  --color-surface: #2c3247;
-  --color-paper: #f4efe9;
-  --color-paper-2: #9a9aae;
-  --color-line: #3a3f56;
-  --color-tuff: #d46a5c;
-  --color-apricot: #e8a23d;
-  --color-ararat: #edeff2;
-  --color-pin-tech: #6e8fbf;
-  --color-pin-creative: #b87fa8;
-  --color-pin-market: #7fa87a;
-  --font-display: var(--font-bricolage);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-ibm-plex-mono);
+  /* One surface scale, warm near-black through to raised panels. */
+  --color-canvas: #121110;
+  --color-panel: #1f1d1a;
+  --color-raised: #2a2623;
+  --color-line: #3a352f;
+
+  --color-fg: #f7f3ec;
+  --color-dim: #a69e93;
+  --color-faint: #6b635a;
+
+  /* Armenian apricot, the only accent. */
+  --color-apricot: #f5a65b;
+  --color-apricot-soft: #ffc188;
+  --color-apricot-wash: #2b2118;
+  --color-on-apricot: #17150f;
+
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo);
   --font-armenian: var(--font-noto-armenian);
+
+  --radius-ctl: 12px;
+  --radius-panel: 18px;
+  --radius-thumb: 11px;
+  --radius-sheet: 22px;
+
+  /* Role scale. Operate-mode: fixed rem, tight ratio, purpose names. */
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.08;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.15;
+  --text-lede: 1.125rem;
+  --text-lede--line-height: 1.3;
+  --text-body: 0.9375rem;
+  --text-ui: 0.8125rem;
+  --text-meta: 0.75rem;
+  --text-data: 0.6875rem;
+  --tracking-display: -0.035em;
+  --tracking-title: -0.03em;
+
+  /* Floating things carry real offset and blur, never a flat halo. */
+  --shadow-float:
+    0 22px 55px rgb(0 0 0 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.035);
+  --shadow-sheet: 0 -18px 45px rgb(0 0 0 / 0.6);
+  --shadow-thumb: 0 2px 8px rgb(0 0 0 / 0.4);
+
+  /* Entrances and exits, on-screen movement, and panels that slide. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
   color-scheme: dark;
-  background: var(--color-dusk);
+  background: var(--color-canvas);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-canvas: #ede6da;
+  --color-panel: #fbf7f0;
+  --color-raised: #efe8dc;
+  --color-line: #d5ccbf;
+  --color-fg: #1a1714;
+  --color-dim: #6b635a;
+  --color-faint: #8a8176;
+  --color-apricot-wash: #f6e4cc;
+  --shadow-float:
+    0 18px 40px rgb(40 30 20 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.7);
+  --shadow-sheet: 0 -14px 36px rgb(40 30 20 / 0.12);
+  --shadow-thumb: 0 2px 8px rgb(40 30 20 / 0.12);
+}
+
+:root[data-theme="light"] .kentron-map .maplibregl-ctrl-attrib-button {
+  filter: none;
+  opacity: 0.65;
+}
+
+:root[data-theme="light"] .kentron-map .maplibregl-ctrl-attrib {
+  background: rgb(251 247 240 / 86%);
 }
 
 * {
@@ -32,88 +97,603 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: var(--color-dusk);
+  background: var(--color-canvas);
 }
 
 body {
-  color: var(--color-paper);
-  font-family: var(--font-inter), sans-serif;
+  color: var(--color-fg);
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
-a {
+a,
+input,
+textarea,
+select {
   -webkit-tap-highlight-color: transparent;
 }
 
+button:not(:disabled),
+a,
+summary {
+  transition:
+    transform 150ms var(--ease-out-soft),
+    color 110ms linear,
+    background-color 110ms linear,
+    border-color 110ms linear,
+    opacity 110ms linear;
+}
+
+/* Scaling the whole element brings the label and icon along, which is what
+   makes a press read as physical rather than as a colour change. Button-sized
+   controls opt into the deeper press; wide rows and panels keep the default,
+   where 3% would read as the whole surface lurching. */
+button:not(:disabled):active,
+a:active,
+summary:active {
+  transform: scale(var(--press-scale, 0.99));
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-tuff);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-apricot);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-apricot);
+  color: var(--color-on-apricot);
 }
 
 .armenian {
-  font-family: var(--font-noto-armenian), var(--font-inter), sans-serif;
+  font-family: var(--font-noto-armenian), var(--font-archivo), sans-serif;
 }
+
+.type-display {
+  font-size: var(--text-display);
+  font-weight: 600;
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+.type-title {
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--tracking-title);
+  text-wrap: balance;
+}
+
+.type-lede {
+  font-size: var(--text-lede);
+  font-weight: 500;
+  line-height: var(--text-lede--line-height);
+  letter-spacing: -0.02em;
+}
+
+.type-body {
+  max-width: 65ch;
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.type-ui {
+  font-size: var(--text-ui);
+  font-weight: 600;
+}
+
+.type-meta {
+  font-size: var(--text-meta);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-data {
+  font-size: var(--text-data);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 768px) {
+  .type-display {
+    font-size: 2.75rem;
+  }
+
+  .type-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Scrollbars belong to the palette too. */
+.scroll-dark {
+  scrollbar-color: var(--color-line) transparent;
+  scrollbar-width: thin;
+}
+
+/* --------------------------------------------------------------------------
+   Map surface
+   -------------------------------------------------------------------------- */
 
 .kentron-map {
   height: 100%;
   width: 100%;
-  background: var(--color-dusk);
+  background: var(--color-canvas);
 }
 
-.kentron-map .maplibregl-ctrl-group {
-  margin: 0 18px calc(42% + 12px) 0;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-line) 86%, transparent);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-  box-shadow: 0 16px 40px rgb(9 12 24 / 22%);
+.kentron-map canvas:focus-visible {
+  outline-offset: -3px;
 }
 
-.kentron-map .maplibregl-ctrl-group button {
-  width: 38px;
-  height: 38px;
-  background: transparent;
-}
-
-.kentron-map .maplibregl-ctrl-group button + button {
-  border-top: 1px solid var(--color-line);
-}
-
-.kentron-map .maplibregl-ctrl-group button:hover {
-  background: var(--color-line);
-}
-
-.kentron-map .maplibregl-ctrl-group .maplibregl-ctrl-icon {
-  filter: invert(1) brightness(1.4);
+/* Flush into the bottom-left corner, clear of the floating results panel. */
+.kentron-map .maplibregl-ctrl-bottom-left .maplibregl-ctrl-attrib {
+  margin: 0;
 }
 
 .kentron-map .maplibregl-ctrl-attrib {
-  background: rgb(35 40 59 / 76%);
-  color: var(--color-paper-2);
-  font: 400 9px/1.4 var(--font-ibm-plex-mono), monospace;
+  background: rgb(18 17 16 / 82%);
+  border-radius: 0 var(--radius-ctl) 0 0;
+  color: var(--color-faint);
+  font:
+    400 9px/1.5 var(--font-archivo),
+    sans-serif;
 }
 
 .kentron-map .maplibregl-ctrl-attrib a {
-  color: var(--color-ararat);
+  color: var(--color-dim);
 }
 
 .kentron-map .maplibregl-ctrl-attrib-button {
-  filter: invert(1) brightness(1.4);
+  filter: invert(1) brightness(1.3) saturate(0);
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   Pin preview — a floating panel lifting off the map
+   -------------------------------------------------------------------------- */
+
+.kentron-map .maplibregl-popup {
+  z-index: 10;
+}
+
+.kentron-map .maplibregl-popup-content {
+  overflow: hidden;
+  width: min(308px, calc(100vw - 28px));
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  box-shadow: var(--shadow-float);
+  animation: kentron-slip-in 190ms var(--ease-out-soft) both;
+  transform-origin: bottom center;
+}
+
+@media (max-width: 767px) {
+  .kentron-map .maplibregl-popup-content {
+    width: min(268px, calc(100vw - 28px));
+  }
+
+  /* Phone preview is a glance, not a second page. */
+  .kentron-slip__image {
+    display: none;
+  }
+
+  .kentron-map .maplibregl-popup-close-button {
+    top: 4px;
+    right: 4px;
+    border-color: var(--color-line);
+    background: var(--color-panel);
+  }
+}
+
+.kentron-map .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.kentron-map .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.kentron-map .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--color-panel);
+}
+
+.kentron-map .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.kentron-map .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.kentron-map .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--color-panel);
+}
+
+.kentron-map .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--color-panel);
+}
+
+.kentron-map .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--color-panel);
+}
+
+/* The panel grows from the marker it belongs to. */
+.kentron-map .maplibregl-popup-anchor-top .maplibregl-popup-content,
+.kentron-map .maplibregl-popup-anchor-top-left .maplibregl-popup-content,
+.kentron-map .maplibregl-popup-anchor-top-right .maplibregl-popup-content {
+  transform-origin: top center;
+}
+
+.kentron-map .maplibregl-popup-anchor-left .maplibregl-popup-content {
+  transform-origin: center left;
+}
+
+.kentron-map .maplibregl-popup-anchor-right .maplibregl-popup-content {
+  transform-origin: center right;
+}
+
+.kentron-map .maplibregl-popup-close-button {
+  z-index: 2;
+  top: 8px;
+  right: 8px;
+  position: absolute;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  overflow: hidden;
+  place-items: center;
+  /* A hairline keeps the disc readable over dark artwork. */
+  border: 1px solid rgb(247 243 236 / 20%);
+  border-radius: 999px;
+  background: rgb(18 17 16 / 86%);
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  text-indent: 0;
+}
+
+.kentron-map .maplibregl-popup-close-button::before,
+.kentron-map .maplibregl-popup-close-button::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 1.5px;
+  background: var(--color-fg);
+}
+
+.kentron-map .maplibregl-popup-close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.kentron-map .maplibregl-popup-close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+:root[data-theme="light"] .kentron-map .maplibregl-popup-close-button {
+  border-color: rgb(26 23 20 / 14%);
+  background: rgb(251 247 240 / 92%);
+}
+
+.kentron-map .maplibregl-popup-close-button:hover {
+  background: rgb(18 17 16 / 96%);
+}
+
+:root[data-theme="light"] .kentron-map .maplibregl-popup-close-button:hover {
+  background: rgb(251 247 240 / 100%);
+}
+
+.kentron-slip__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* The house filter is for fallback art only; uploaded photos stay untouched. */
+.kentron-slip__image--art {
+  filter: saturate(0.82);
+}
+
+.kentron-slip__body {
+  padding: 13px 16px 16px;
+}
+
+.kentron-slip__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-dim);
+  font:
+    500 12px/1.4 var(--font-archivo),
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.kentron-slip--live .kentron-slip__eyebrow {
+  color: var(--color-apricot);
+  font-weight: 600;
+}
+
+.kentron-slip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.kentron-slip h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 6px 24px 0 0;
+  font:
+    600 16px/1.25 var(--font-archivo),
+    sans-serif;
+  letter-spacing: -0.02em;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.kentron-slip__meta {
+  margin: 6px 0 0;
+  color: var(--color-dim);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kentron-slip a {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  border-top: 1px solid var(--color-line);
+  padding-top: 11px;
+  color: var(--color-fg);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.kentron-slip a:hover {
+  color: var(--color-apricot);
+}
+
+.kentron-slip__arrow {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  color: var(--color-dim);
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.kentron-slip__arrow svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Touch fires a false hover on tap, so the nudge is pointer-gated. */
+.kentron-slip a:hover .kentron-slip__arrow {
+  border-color: currentColor;
+  color: var(--color-apricot);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kentron-slip a:hover .kentron-slip__arrow {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes kentron-slip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion language and loading
+   -------------------------------------------------------------------------- */
+
+.skeleton {
+  background: var(--color-raised);
+  opacity: 0.62;
+  animation: kentron-skeleton-breathe 1.45s ease-in-out infinite;
+}
+
+.map-veil {
+  background: var(--color-canvas);
+  pointer-events: none;
+  transition: opacity 180ms var(--ease-out-soft);
+}
+
+/* Grows out of the filter button that opened it, and leaves the same way.
+   A transition rather than keyframes, so a double-tap retargets mid-flight
+   instead of restarting from nothing. */
+.map-filter-popover {
+  transform-origin: bottom left;
+  transition:
+    opacity 170ms var(--ease-out-soft),
+    transform 170ms var(--ease-out-soft);
+}
+
+.map-filter-popover[data-open="false"] {
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Results panel and its edge tab
+   -------------------------------------------------------------------------- */
+
+/* The panel leaves through the right edge it lives against, so hiding it
+   reads as putting it away rather than deleting it. The opacity is not
+   decoration: without it the float shadow smears across the map for the last
+   third of the travel. */
+.results-panel {
+  transition:
+    transform 320ms var(--ease-drawer),
+    opacity 180ms var(--ease-out-soft);
+}
+
+.results-panel[data-collapsed="true"] {
+  transform: translateX(calc(100% + 40px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.results-tab {
+  transition:
+    transform 260ms var(--ease-drawer),
+    opacity 160ms var(--ease-out-soft);
+}
+
+.results-tab[data-collapsed="false"] {
+  transform: translateX(calc(100% + 8px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The map action stack rides the panel rather than jumping the width of it. */
+.map-actions {
+  transition: transform 320ms var(--ease-drawer);
 }
 
 @media (min-width: 768px) {
-  .kentron-map .maplibregl-ctrl-group {
-    margin: 0 340px 24px 0;
+  .map-actions {
+    transform: translateX(var(--kentron-actions-shift, 0px));
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+/* Swapping timeline replaces every row at once; a plain fade keeps that from
+   reading as a glitch. Panning the map does not trigger it. */
+.results-swap {
+  animation: kentron-fade-in 160ms var(--ease-out-soft) both;
+}
+
+/* The active segment is a clipped copy of the whole switch, so the pill and
+   the label it carries move as one object. Interpolating two text colours
+   against a moving background never lands. */
+.segmented-active {
+  transition: clip-path 200ms var(--ease-in-out-soft);
+}
+
+@keyframes kentron-fade-in {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes kentron-skeleton-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+  }
+  50% {
+    opacity: 0.76;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion floor
+   -------------------------------------------------------------------------- */
+
+/*
+  Reduced motion means fewer and gentler, not none: the fades that explain a
+  state change stay, everything that travels across the screen stops. The two
+  gates cannot be merged — one is the OS setting, the other is the in-app
+  preference, and either alone is enough.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .kentron-map .maplibregl-popup-content,
+  .skeleton,
+  .results-swap {
+    animation: none !important;
+  }
+
+  .kentron-slip a:hover .kentron-slip__arrow {
+    transform: none;
+  }
+
+  .map-veil,
+  .map-actions,
+  .results-sheet,
+  .segmented-active {
+    transition: none !important;
+  }
+
+  button:not(:disabled):active,
+  a:active,
+  summary:active {
+    transform: none;
+  }
+
+  .map-filter-popover,
+  .results-panel,
+  .results-tab {
+    transition-property: opacity;
+  }
+
+  .map-filter-popover[data-open="false"],
+  .results-panel[data-collapsed="true"],
+  .results-tab[data-collapsed="false"] {
+    transform: none;
+  }
+}
+
+[data-reduce-motion="true"] .kentron-map .maplibregl-popup-content,
+[data-reduce-motion="true"] .skeleton,
+[data-reduce-motion="true"] .results-swap {
+  animation: none !important;
+}
+
+[data-reduce-motion="true"] .kentron-slip a:hover .kentron-slip__arrow {
+  transform: none;
+}
+
+[data-reduce-motion="true"] .kentron-motion-nudge {
+  transform: none !important;
+  transition: none !important;
+}
+
+[data-reduce-motion="true"] .map-veil,
+[data-reduce-motion="true"] .map-actions,
+[data-reduce-motion="true"] .results-sheet,
+[data-reduce-motion="true"] .kentron-toggle-knob,
+[data-reduce-motion="true"] .kentron-filter-check,
+[data-reduce-motion="true"] .segmented-active {
+  transition: none !important;
+}
+
+[data-reduce-motion="true"] button:not(:disabled):active,
+[data-reduce-motion="true"] a:active,
+[data-reduce-motion="true"] summary:active {
+  transform: none;
+}
+
+[data-reduce-motion="true"] .map-filter-popover,
+[data-reduce-motion="true"] .results-panel,
+[data-reduce-motion="true"] .results-tab {
+  transition-property: opacity;
+}
+
+[data-reduce-motion="true"] .map-filter-popover[data-open="false"],
+[data-reduce-motion="true"] .results-panel[data-collapsed="true"],
+[data-reduce-motion="true"] .results-tab[data-collapsed="false"] {
+  transform: none;
 }
