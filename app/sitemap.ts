@@ -1,7 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import type { MetadataRoute } from "next";
+import {
+  getSiteUrl,
+  getSupabasePublishableKey,
+  getSupabaseUrl,
+} from "@/lib/supabase/env";
 
-const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const site = getSiteUrl();
 
 const staticPaths = ["", "/about", "/search", "/privacy", "/terms"];
 
@@ -13,12 +18,8 @@ export const revalidate = 3600;
  * Live posts are deliberately left out: they expire after four hours.
  */
 async function publishedEventPaths() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return [];
-
   try {
-    const supabase = createClient(url, key, {
+    const supabase = createClient(getSupabaseUrl(), getSupabasePublishableKey(), {
       auth: { persistSession: false },
     });
     const { data } = await supabase

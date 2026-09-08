@@ -27,7 +27,8 @@ Framework **Next.js**. Root **.**. Build **`next build`**. Node **22**.
 
    - `NEXT_PUBLIC_SITE_URL` — production https origin, no trailing slash
    - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+     from the Vercel Supabase integration — the app accepts either)
    - `SUPABASE_SERVICE_ROLE_KEY` — server-only
    - `NEXT_PUBLIC_CARTO_API_KEY` — if the map still uses CARTO tiles
    - `NEXT_PUBLIC_USE_FIXTURES=false`
